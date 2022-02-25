@@ -7,6 +7,8 @@ import { InicioComponent } from './componentes/inicio/inicio.component';
 import { FooterComponent } from './componentes/footer/footer.component';
 import { MenuComponent } from './componentes/menu/menu.component';
 import { BannerPrincipalComponent } from './componentes/banner-principal/banner-principal.component';
+import { TooltipComponent } from './componentes/tooltip/tooltip.component';
+import { PopoverModule } from 'ngx-bootstrap/popover';
 
 @NgModule({
   declarations: [
@@ -14,11 +16,13 @@ import { BannerPrincipalComponent } from './componentes/banner-principal/banner-
     InicioComponent,
     FooterComponent,
     MenuComponent,
-    BannerPrincipalComponent
+    BannerPrincipalComponent,
+    TooltipComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    PopoverModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,0 +1,81 @@
+.head-title {
+  background: #65BD42;
+  text-align: center;
+  /* padding: 42px 0px; */
+  /* height: 124px; */
+  height: 124px;
+  /* vertical-align: middle; */
+}
+
+/* .ctn-htitle img{
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}  */
+
+@media (max-width: 575px) {
+  .ctn-htitle{
+      height: 124px;
+      /* padding: 0px; */
+      margin: 0 auto;
+  }
+}
+
+@media (min-width: 576px) {
+  .ctn-htitle{
+      width: 500px;
+      height: 124px;
+      /* padding: 0px; */
+      margin: 0 auto;
+  }
+}
+
+.ctn-htitle-x {
+  background: url(/assets/images/quipub.png) no-repeat;
+  display: inline-block;
+  vertical-align: top;
+  width: 100%;
+  /* padding: 0px 0 0px 68px; */
+  /* height: 40px; */
+  /* background-size: 40px auto; */
+  padding: 0px 0 0px 180px;
+  height: 100%;
+  background-size: 180px auto;
+  font-family: montserrat-bold;
+  /* height: 124px; */
+  /* padding: 6px 0 6px 68px; */
+}
+
+/*.ctn-htitle {
+  background: url(/assets/images/quipub.png) no-repeat;
+  display: inline-block;
+  vertical-align: top;
+  width: 100%;
+  padding: 0px 0 0px 68px;
+  height: 40px;
+  background-size: 40px auto;
+  padding: 0px 0 0px 180px;
+  height: 160px;
+  background-size: 180px auto;
+  font-family: montserrat-bold;
+  height: 124px;
+  padding: 6px 0 6px 68px;
+}*/
+
+.ctn-htitle h2 {
+  font-weight: 400;
+  /* font-family: montserrat-bold,Arial; */
+  border-left: 5px solid #fff;
+  color: #fff;
+  font-size: 1.4375rem;
+  line-height: 22px;
+  margin: 0;
+  padding-left: 10px;
+  font-weight: bold;
+}
+
+.ctn-htitle h2 span {
+  font-size: 1.125rem;
+  line-height: 18px;
+  display: block;
+}

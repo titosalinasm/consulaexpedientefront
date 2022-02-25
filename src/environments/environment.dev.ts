@@ -1,5 +1,5 @@
 export const environment = {
-  production: true,
+  production: false,
   apiURL: {
     registroURL: 'https://servicios.indecopi.gob.pe/appDSDRegMarcasApi',
     // tokenURL: 'https://desapache.indecopi.gob.pe/appTodosServicioAutorizacion/oauth/token',

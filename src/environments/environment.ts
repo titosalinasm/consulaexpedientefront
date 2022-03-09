@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   apiURL: {
-   registroURL: 'http://localhost:8080/appDSDRegMarcasApi',
+   registroURL: 'http://localhost:8080/appDSDExpConsApi',
    //  registroURL: 'https://qa2.indecopi.gob.pe/appDSDRegMarcasApi',
  }
 };

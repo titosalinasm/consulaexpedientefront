@@ -1,3 +1,18 @@
+@font-face{
+  font-family:montserrat-regular;
+  src: url(~assets/fonts/montserrat-regular-webfont.woff) format('woff');
+}
+
+@font-face{
+  font-family:montserrat-medium;
+  src: url(~assets/fonts/montserrat-medium-webfont.woff) format('woff');
+}
+
+@font-face{
+  font-family:montserrat-bold;
+  src: url(~assets/fonts/montserrat-bold-webfont.woff) format('woff');
+}
+
 /* You can add global styles to this file, and also import other style files */
 
 ._btnround {
@@ -203,4 +218,11 @@ input:checked + .slider .off
 
 .slider.round:before {
   border-radius: 50%;
+}
+
+/*Consulta de expedientes*/
+
+.span_search_cert{
+border-bottom: 3px solid #65BD42;
+color: #65BD42;
 }

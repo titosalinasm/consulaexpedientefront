@@ -1,5 +1,5 @@
 export class IResponse {
-    success: boolean;
-    message: string;
+    success: boolean=false;
+    message: string='';
     data: any;
 }

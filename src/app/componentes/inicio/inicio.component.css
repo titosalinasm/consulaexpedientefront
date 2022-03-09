@@ -75,12 +75,6 @@ p {
   cursor: pointer;
 }
 
-.toopltip1 {
-
-  vertical-align: top;
-  cursor: pointer;
-  position: absolute;
-}
 
 .toopltip._none {
   display: inline-block;

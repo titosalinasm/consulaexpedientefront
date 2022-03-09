@@ -1,0 +1,100 @@
+<br>
+<div class="container">
+  <div class="row justify-content-around">
+    <div class="ctn-steps step0  col-md-9">
+      <div class="container">
+
+        <div class="card mb-3" style="border: 0px;" >
+          <div class="row no-gutters">
+            <div class="col-md-1">
+              <img src="./assets/images/con_certificado.svg" class="card-img" style="width: 80px;">
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h5 class="card-title">Consulta por Número de Certificado</h5>
+                <p class="card-text">Realice la búsqueda por número de certificado.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <form [formGroup]="filtersForm">
+        <label for="basic-url"><b>Ingrese N° de Certificado</b><app-tooltip popDescripcion="Lo brinda la DSD">
+        </app-tooltip></label>
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text" > <span class="material-icons">workspace_premium</span></span>
+          </div>
+          <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3" formControlName="vcNroCertificado">
+        </div>
+
+        <label for="basic-url"><b>Tipo de Certificado (Opcional)</b><app-tooltip popDescripcion="Lo brinda la DSD">
+        </app-tooltip></label>
+
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text" >
+            <span class="material-icons">
+              list
+              </span>
+            </span>
+          </div>
+          <select class="form-control" formControlName="vcTipoSolicitud">
+            <option value="">Seleccione tipo de certificado</option>
+            <option *ngFor="let item of lstTipoSolicitud" [value]="item.vcCodigoSolicitud">
+              {{item.vcDescSolicitud}}</option>
+          </select>
+        </div>
+        </form>
+
+        <div class="row">
+          <div class="col-sm text-center">
+            <button type="submit" class="btn btn-success font-mb" (click)="doBuscarCertificado()"><span
+                style="margin-right: 5px;"><i class="fa fa-search"></i></span>Buscar</button>
+            <button type="submit" class="btn btn-secondary font-mb ml-1" ><span
+                style="margin-right: 5px;"><i class="fa fa-refresh" ></i></span>Limpiar</button>
+          </div>
+        </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+<p-dialog header="Búsqueda por certificado" [(visible)]="displayMaximizable" [modal]="true" [style]="{width: '70vw'}" [maximizable]="true"
+    [draggable]="false" [resizable]="false">
+    <p *ngIf="lstCertificados.length==1">Se encontraró 1 certificado para los parametros de búsqueda <button pButton pRipple type="button" style="height: 25px;" class="p-button-rounded p-button-secondary p-button-sm">{{filtersForm.value.vcNroCertificado}}</button></p>
+    <p *ngIf="lstCertificados.length>1">Se encontraron {{lstCertificados.length}} certificados para los parametros de búsqueda <button pButton pRipple type="button" style="height: 25px;" class="p-button-rounded p-button-secondary p-button-sm">{{filtersForm.value.vcNroCertificado}}</button></p>
+
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr class="font-mb">
+            <th scope="col">Nro. de Certificado</th>
+            <th scope="col">Marca</th>
+            <th scope="col">Tipo de Signo</th>
+            <th scope="col">Clases</th>
+            <th scope="col">Titulares</th>
+          </tr>
+        </thead>
+        <tbody *ngFor="let item of lstCertificados; let row = index" id="{{row}}">
+          <tr class="row-hover">
+            <td>
+              <span class="span_search_cert">
+                <button pButton pRipple icon="pi pi-search"  iconPos="left"  type="button" label="{{item.vcNroCertificado}}" class="p-button-success p-button-text"></button>
+              <!-- <span class="material-icons" style="font-size: 13px;">search</span> -->
+              <!-- <span >{{item.vcNroCertificado}}</span> -->
+            </span>
+          </td>
+            <td>{{item.vcDenominacion}}</td>
+            <td>{{item.vcTipoSigno}}</td>
+            <td>{{item.vcClases}}</td>
+            <td>{{item.vcTitulares}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+        <ng-template pTemplate="footer">
+            <p-button icon="pi pi-check" (click)="displayMaximizable=false" label="Ok" styleClass="p-button-text"></p-button>
+        </ng-template>
+</p-dialog>

@@ -39,7 +39,7 @@
             </span>
           </div>
           <select class="form-control" formControlName="vcTipoSolicitud">
-            <option value="">Seleccione tipo de certificado</option>
+            <option value="-1">Seleccione tipo de certificado</option>
             <option *ngFor="let item of lstTipoSolicitud" [value]="item.vcCodigoSolicitud">
               {{item.vcDescSolicitud}}</option>
           </select>
@@ -50,17 +50,19 @@
           <div class="col-sm text-center">
             <button type="submit" class="btn btn-success font-mb" (click)="doBuscarCertificado()"><span
                 style="margin-right: 5px;"><i class="fa fa-search"></i></span>Buscar</button>
-            <button type="submit" class="btn btn-secondary font-mb ml-1" ><span
+            <button type="submit" class="btn btn-secondary font-mb ml-1" (click)="doLimpiar()" ><span
                 style="margin-right: 5px;"><i class="fa fa-refresh" ></i></span>Limpiar</button>
           </div>
         </div>
         <br>
+        <div *ngIf="objCertificados!=null">
         <div class="row" style="margin-bottom: 15px;">
           <div class="col-sm-12">
           <p-panel header="Marca y Estado del Certificado">
             <div class="row" >
             <div class="col-sm-9" style="font-size: 14px;">
-              <img src="" alt="">
+              <img *ngIf="objCertificados?.vcLogo!='-1'" [src]="objCertificados?.vcLogo" style="max-width: 150px; max-height: 150px;" />
+              <br *ngIf="objCertificados?.vcLogo!='-1'">
               <b>Clase(s):</b> {{objCertificados?.vcClases}}<br>
               <b>Tipo de Solicitud:</b> {{objCertificados?.vcTipoSolicitud}}<br>
               <b>Tipo de Signo: </b> {{objCertificados?.vcTipoSigno}}<br>
@@ -105,11 +107,45 @@
         <div class="row" style="margin-bottom: 15px;">
           <div class="col-sm-12">
             <p-panel header="Expedientes relacionados al certificado">
-              Content
+              <p-progressBar *ngIf="blLoadinExpReal" mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
+                        <div class="table-responsive" *ngIf="!blLoadinExpReal">
+                          <table class="table">
+                            <thead>
+                              <tr class="font-mb">
+                                <th scope="col">Número de expediente</th>
+                                <th scope="col">Tipo de procedimiento</th>
+                                <th scope="col">Fecha de presentación</th>
+                                <th scope="col">Clase</th>
+                                <th scope="col">Estado</th>
+                              </tr>
+                            </thead>
+                            <tbody
+                            *ngFor="let item of lstExpedienteRelacionado |  paginate : { itemsPerPage: 5, currentPage: paginaActualExpRel };  let row = index " >
+                              <tr class="row-hover">
+                                <td>
+                                  <span class="span_search_cert">
+                                    <button pButton pRipple icon="pi pi-search"  iconPos="left"  type="button" label="{{item.vcIdExpediente}} - {{item.nuAnioExpediente}}" class="p-button-success p-button-text"
+                                    ></button>
+                                </span>
+                              </td>
+                                <td>{{item.vcTipoExpediente}}</td>
+                                <td>{{item.vcFechaPresentacion}}</td>
+                                <td>{{item.vcClase}}</td>
+                                <td>Estado</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                          <pagination-controls
+                          [responsive]="true"
+                          previousLabel="Atras"
+                          nextLabel="Siguiente"
+                          (pageChange)="paginaActualExpRel = $event">
+                        </pagination-controls>
+                        </div>
           </p-panel>
           </div>
         </div>
-
+         </div>
         </div>
       </div>
     </div>

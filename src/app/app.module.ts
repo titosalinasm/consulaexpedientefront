@@ -21,7 +21,12 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import {PanelModule} from 'primeng/panel';
+import {ProgressBarModule} from 'primeng/progressbar';
+// import {AutoCompleteModule} from 'primeng/autocomplete';
 import { BusCertificadoService } from './servicios/bus-certificado.service';
+import { BusExpRelacionadoService } from './servicios/bus-exp-relacionado.service';
+import {NgxPaginationModule} from 'ngx-pagination';
+import { CommonModule } from '@angular/common';
 
 
 @NgModule({
@@ -47,13 +52,20 @@ import { BusCertificadoService } from './servicios/bus-certificado.service';
     NgxSpinnerModule,
     DialogModule,
     ButtonModule,
-    PanelModule
+    PanelModule,
+    ProgressBarModule,
+    CommonModule,
+    NgxPaginationModule,
+    // AutoCompleteModule
   ],
   providers: [
     ConfiguracionService,
     BusCertificadoService,
+    BusExpRelacionadoService,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true}
   ],
+  exports:[CommonModule,
+    NgxPaginationModule],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

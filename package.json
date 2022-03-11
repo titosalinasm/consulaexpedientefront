@@ -12,7 +12,6 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "^11.2.14",
-    "@angular/cdk": "^13.2.5",
     "@angular/common": "~11.2.3",
     "@angular/compiler": "~11.2.3",
     "@angular/core": "~11.2.3",
@@ -29,6 +28,7 @@
     "bootstrap": "^4.5.3",
     "material-design-icons": "^3.0.1",
     "ngx-bootstrap": "^7.1.2",
+    "ngx-pagination": "^5.1.1",
     "ngx-spinner": "^9.0.2",
     "primeicons": "^4.1.0",
     "primeng": "^11.4.2",

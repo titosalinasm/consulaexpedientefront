@@ -3,6 +3,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { GlobalService } from 'src/app/global.service';
 import { BusCertificadoService } from 'src/app/servicios/bus-certificado.service';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { BusExpRelacionadoService } from 'src/app/servicios/bus-exp-relacionado.service';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-consulta-certificado',
@@ -83,14 +85,20 @@ export class ConsultaCertificadoComponent implements OnInit {
   lstCertificados : any[]=[];
   objCertificados : any;
 
+  lstExpedienteRelacionado : any[]=[];
+  blLoadinExpReal: boolean=true;
+
+  paginaActualExpRel : any=1;
+
   filtersForm = this.formBuilder.group({
     vcNroCertificado: ['T00001232', [Validators.required]],
-    vcTipoSolicitud: ['', [Validators.required]],
+    vcTipoSolicitud: ['-1', [Validators.required]],
   });
 
   constructor(
     private globalService: GlobalService,
     private busCertificadoService : BusCertificadoService,
+    private busExpRelacionadoService: BusExpRelacionadoService,
     private _spinner: NgxSpinnerService,
     private formBuilder: FormBuilder,
     ) {
@@ -101,6 +109,7 @@ export class ConsultaCertificadoComponent implements OnInit {
   ngOnInit() {
 
   }
+
   doSeleccionado(item: any){
     this.displayMaximizable = false;
     let arrTitulares=(item.vcTitulares).split('; ');
@@ -115,16 +124,29 @@ export class ConsultaCertificadoComponent implements OnInit {
     this.objCertificados=item;
     this.objCertificados.listTitulares=titularesLis;
 
+    this.doCargaExpeRelacionado(item.vcNroCertificado, item.nuAnioRegistro);
+
   }
 
   showMaximizableDialog() {
     this.displayMaximizable = true;
   }
+  doLimpiar(){
+    this.blLoadinExpReal=true;
+    this.objCertificados=null;
+    this.lstCertificados=[];
+    this.lstExpedienteRelacionado=[];
+  }
 
   doBuscarCertificado(){
+
     this._spinner.show();
+
+    this.doLimpiar();
+
     let param={
-      vcNroCertificado : this.filtersForm.value.vcNroCertificado
+      vcNroCertificado : this.filtersForm.value.vcNroCertificado,
+      vcTipoSolicitud : this.filtersForm.value.vcTipoSolicitud
     }
     this.busCertificadoService.getWithPost$(param).subscribe(
       resp=>{
@@ -133,6 +155,8 @@ export class ConsultaCertificadoComponent implements OnInit {
         if(this.lstCertificados.length==1){
           // this.objCertificados=this.lstCertificados[0];
           this.doSeleccionado(this.lstCertificados[0]);
+          this.doCargaExpeRelacionado(this.lstCertificados[0].vcNroCertificado, this.lstCertificados[0].nuAnioRegistro);
+
         }else{
         this.showMaximizableDialog();
         }
@@ -140,7 +164,28 @@ export class ConsultaCertificadoComponent implements OnInit {
       error=>{
         this._spinner.hide();
       }
-    )
+    );
+  }
+
+  doCargaExpeRelacionado(vcNroCertificado: string, nuAnioRegistro: number){
+    // this._spinner.show();
+    this.blLoadinExpReal=true;
+    let param={
+      vcNroCertificado : vcNroCertificado,
+      nuAnioRegistro: nuAnioRegistro
+    }
+    this.busExpRelacionadoService.getWithPost$(param).subscribe(
+      resp=>{
+        // this._spinner.hide();
+        this.blLoadinExpReal=false;
+        this.lstExpedienteRelacionado=resp.lstExpRelacionado;
+
+      },
+      error=>{
+        this.blLoadinExpReal=true;
+        // this._spinner.hide();
+      }
+    );
   }
 
 }

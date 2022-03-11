@@ -1,3 +1,80 @@
-<p>
-  consulta-expediente works!
-</p>
+<br>
+<div class="container">
+  <div class="row justify-content-around">
+    <div class="ctn-steps step0  col-md-9">
+      <div class="container">
+        <div class="card mb-3" style="border: 0px;" >
+          <div class="row no-gutters">
+            <div class="col-md-1">
+              <img src="./assets/images/con_expediente.svg" class="card-img" style="width: 80px;">
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h5 class="card-title">Consulta por Número de expediente</h5>
+                <p class="card-text">Realice una búsqueda por número de expediente.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <form [formGroup]="filtersForm">
+          <div class="row" >
+            <div class="col-sm-9" >
+              <label for="basic-url"><b>Ingrese N° de Expediente</b><app-tooltip popDescripcion="Lo brinda la DSD">
+              </app-tooltip></label>
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" ><span class="material-icons">
+                    tag
+                    </span></span>
+                </div>
+                <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3" formControlName="vcNroCertificado">
+
+              </div>
+            </div>
+            <div class="col-sm-3 boton_search" >
+              <button type="submit" class="btn btn-success font-mb" style="    margin-top: 10px;"><span
+                style="margin-right: 5px;"><i class="fa fa-search"></i></span>Buscar</button>
+            </div>
+           </div>
+          </form>
+
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr class="font-mb">
+                  <th scope="col">Número de expediente</th>
+                  <th scope="col">Tipo de procedimiento</th>
+                  <th scope="col">Fecha de presentación</th>
+                  <th scope="col">Clase</th>
+                  <th scope="col">Estado</th>
+                </tr>
+              </thead>
+              <tbody
+              *ngFor="let item of lstExpedienteRelacionado |  paginate : { itemsPerPage: 5, currentPage: paginaActualExpRel };  let row = index " >
+                <tr class="row-hover">
+                  <td>
+                    <span class="span_search_cert">
+                      <button pButton pRipple icon="pi pi-search"  iconPos="left"  type="button" label="{{item.vcIdExpediente}} - {{item.nuAnioExpediente}}" class="p-button-success p-button-text"
+                      ></button>
+                  </span>
+                </td>
+                  <td>{{item.vcTipoExpediente}}</td>
+                  <td>{{item.vcFechaPresentacion}}</td>
+                  <td>{{item.vcClase}}</td>
+                  <td>Estado</td>
+                </tr>
+              </tbody>
+            </table>
+            <pagination-controls
+            [responsive]="true"
+            previousLabel="Atras"
+            nextLabel="Siguiente"
+            (pageChange)="paginaActualExpRel = $event">
+          </pagination-controls>
+          </div>
+
+      </div>
+    </div>
+  </div>
+</div>

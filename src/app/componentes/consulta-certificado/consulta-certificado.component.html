@@ -54,6 +54,61 @@
                 style="margin-right: 5px;"><i class="fa fa-refresh" ></i></span>Limpiar</button>
           </div>
         </div>
+        <br>
+        <div class="row" style="margin-bottom: 15px;">
+          <div class="col-sm-12">
+          <p-panel header="Marca y Estado del Certificado">
+            <div class="row" >
+            <div class="col-sm-9" style="font-size: 14px;">
+              <img src="" alt="">
+              <b>Clase(s):</b> {{objCertificados?.vcClases}}<br>
+              <b>Tipo de Solicitud:</b> {{objCertificados?.vcTipoSolicitud}}<br>
+              <b>Tipo de Signo: </b> {{objCertificados?.vcTipoSigno}}<br>
+              <b>Denominación:</b> {{objCertificados?.vcDenominacion}}<br>
+             </div>
+             <div class="col-sm-3">
+              <div class="row">
+                <div class="col-sm-12" style="text-align: center;">
+                  <img *ngIf="objCertificados?.vcEstado=='A'" src="./assets/status/status_vigente.svg"  width="80"/>
+                  <img *ngIf="objCertificados?.vcEstado=='VC'" src="./assets/status/status_vigente.svg"  width="80"/>
+                  <img *ngIf="objCertificados?.vcEstado=='C'" src="./assets/status/status_cancelado.svg"  width="80"/>
+                  <img *ngIf="objCertificados?.vcEstado=='U'" src="./assets/status/status_caduco.svg"  width="80"/>
+                  <span placement="auto" class="toopltip" popover="Texto lo brinda la DSD" triggers="mouseenter:mouseleave"
+                  >
+                </span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12" style="text-align: center; font-size: 10px;">
+                  <b>Certificado {{objCertificados?.vcNroCertificado}}</b>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12" style="text-align: left; font-size: 10px;">
+                  <b><div [innerHTML]="objCertificados?.vcDescEstado"></div></b>
+                </div>
+              </div>
+            </div>
+          </div>
+          </p-panel>
+          </div>
+        </div>
+
+        <div class="row" style="margin-bottom: 15px;">
+          <div class="col-sm-12">
+            <p-panel header="Titular(es)">
+              <div [innerHTML]="objCertificados?.listTitulares"></div>
+          </p-panel>
+          </div>
+        </div>
+
+        <div class="row" style="margin-bottom: 15px;">
+          <div class="col-sm-12">
+            <p-panel header="Expedientes relacionados al certificado">
+              Content
+          </p-panel>
+          </div>
+        </div>
 
         </div>
       </div>
@@ -80,9 +135,8 @@
           <tr class="row-hover">
             <td>
               <span class="span_search_cert">
-                <button pButton pRipple icon="pi pi-search"  iconPos="left"  type="button" label="{{item.vcNroCertificado}}" class="p-button-success p-button-text"></button>
-              <!-- <span class="material-icons" style="font-size: 13px;">search</span> -->
-              <!-- <span >{{item.vcNroCertificado}}</span> -->
+                <button pButton pRipple icon="pi pi-search"  iconPos="left"  type="button" label="{{item.vcNroCertificado}}" class="p-button-success p-button-text"
+                (click)="doSeleccionado(item)"></button>
             </span>
           </td>
             <td>{{item.vcDenominacion}}</td>

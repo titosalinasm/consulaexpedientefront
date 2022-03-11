@@ -226,3 +226,7 @@ input:checked + .slider .off
 border-bottom: 3px solid #65BD42;
 color: #65BD42;
 }
+
+.red_color{
+  color: red !important;
+}

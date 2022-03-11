@@ -20,6 +20,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
+import {PanelModule} from 'primeng/panel';
 import { BusCertificadoService } from './servicios/bus-certificado.service';
 
 
@@ -45,7 +46,8 @@ import { BusCertificadoService } from './servicios/bus-certificado.service';
     ReactiveFormsModule,
     NgxSpinnerModule,
     DialogModule,
-    ButtonModule
+    ButtonModule,
+    PanelModule
   ],
   providers: [
     ConfiguracionService,

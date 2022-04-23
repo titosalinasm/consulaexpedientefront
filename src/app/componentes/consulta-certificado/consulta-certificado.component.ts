@@ -5,6 +5,7 @@ import { BusCertificadoService } from 'src/app/servicios/bus-certificado.service
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { BusExpRelacionadoService } from 'src/app/servicios/bus-exp-relacionado.service';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-consulta-certificado',
@@ -101,6 +102,7 @@ export class ConsultaCertificadoComponent implements OnInit {
     private busExpRelacionadoService: BusExpRelacionadoService,
     private _spinner: NgxSpinnerService,
     private formBuilder: FormBuilder,
+    private messageService: MessageService
     ) {
       // this.lstTipoSolicitud=this.globalService.objConfiguracion.lstTipoSolicitud;
 
@@ -111,6 +113,12 @@ export class ConsultaCertificadoComponent implements OnInit {
   }
 
   doSeleccionado(item: any){
+
+    //muestra mensaje si esta en periodo de renovación
+    if(item.nuFlagPeriodoRen!=0){
+    this.messageService.add({severity:'info', summary: 'Información', detail: 'Este Certificado en perido de renovación. Si usted es el titular o representante, ingresa a este enlace.'});
+    }
+
     this.displayMaximizable = false;
     let arrTitulares=(item.vcTitulares).split('; ');
     let titularesLis='<ul>';
@@ -153,12 +161,16 @@ export class ConsultaCertificadoComponent implements OnInit {
         this._spinner.hide();
         this.lstCertificados=resp.lstCertificado;
         if(this.lstCertificados.length==1){
-          // this.objCertificados=this.lstCertificados[0];
+
           this.doSeleccionado(this.lstCertificados[0]);
           this.doCargaExpeRelacionado(this.lstCertificados[0].vcNroCertificado, this.lstCertificados[0].nuAnioRegistro);
 
         }else{
-        this.showMaximizableDialog();
+          if(this.lstCertificados.length>0){
+             this.showMaximizableDialog();
+          }else{
+            this.messageService.add({severity:'warn', summary: 'Advertencia', detail: 'No se ha encontrado ningun certificado'});
+          }
         }
       },
       error=>{
@@ -187,5 +199,17 @@ export class ConsultaCertificadoComponent implements OnInit {
       }
     );
   }
+
+onConfirm() {
+    this.messageService.clear('c');
+}
+
+onReject() {
+    this.messageService.clear('c');
+}
+
+clear() {
+    this.messageService.clear();
+}
 
 }

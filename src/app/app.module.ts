@@ -22,11 +22,17 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import {PanelModule} from 'primeng/panel';
 import {ProgressBarModule} from 'primeng/progressbar';
+import {ToastModule} from 'primeng/toast';
 // import {AutoCompleteModule} from 'primeng/autocomplete';
 import { BusCertificadoService } from './servicios/bus-certificado.service';
 import { BusExpRelacionadoService } from './servicios/bus-exp-relacionado.service';
 import {NgxPaginationModule} from 'ngx-pagination';
 import { CommonModule } from '@angular/common';
+import { BusExpedienteService } from './servicios/bus-expediente.service';
+import { MessageService } from 'primeng/api';
+import { DetalleexpedienteService } from './servicios/detalleexpediente.service';
+import { TabsModule } from 'ngx-bootstrap/tabs';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 
 @NgModule({
@@ -56,12 +62,18 @@ import { CommonModule } from '@angular/common';
     ProgressBarModule,
     CommonModule,
     NgxPaginationModule,
+    ToastModule,
+    TabsModule.forRoot(),
+    ModalModule.forRoot()
     // AutoCompleteModule
   ],
   providers: [
     ConfiguracionService,
     BusCertificadoService,
     BusExpRelacionadoService,
+    BusExpedienteService,
+    MessageService,
+    DetalleexpedienteService,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true}
   ],
   exports:[CommonModule,

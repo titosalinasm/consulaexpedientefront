@@ -1,5 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, TemplateRef, ViewChild} from '@angular/core';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { BusExpedienteService } from 'src/app/servicios/bus-expediente.service';
+import { DetalleexpedienteService } from 'src/app/servicios/detalleexpediente.service';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-consulta-expediente',
@@ -8,48 +12,86 @@ import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 })
 export class ConsultaExpedienteComponent implements OnInit {
 
+  @ViewChild('_templateModal') _templateModal: TemplateRef<any>  ;
+
+
+  lstExpediente : any[]=[];
+  paginaActual : any=1;
+  activeStateDetalle: boolean[] = [true, true, true];
+
+  modalRef: BsModalRef;
+
+
+  objDetalleExpediente : any;
+
   filtersForm = this.formBuilder.group({
-    vcNroExpediente: ['412879-2010', [Validators.required]],
+    // vcNroExpediente: ['412879-2010', [Validators.required]],
+    // vcNroExpediente: ['215140-2004', [Validators.required]],
+       vcNroExpediente: ['860373-2020', [Validators.required]],
+
+
   });
 
-  filteredCountries : any[]=[];
-  selectedCountry: any[]=[];
 
-  countries: any[]=[
-    {
-    "vcIdExpediente": "412879",
-    "nuAnioExpediente": 2010
-    },
-    {
-    "vcIdExpediente": "412877",
-    "nuAnioExpediente": 2010
-    },
-    {
-    "vcIdExpediente": "412878",
-    "nuAnioExpediente": 2010
+  constructor(private formBuilder: FormBuilder,
+              private busExpedienteService:  BusExpedienteService,
+              private detalleexpedienteService: DetalleexpedienteService,
+              private _spinner: NgxSpinnerService,
+              private modalService: BsModalService,
+
+    ) {
     }
-    ]
-
-  constructor(    private formBuilder: FormBuilder,
-
-    ) { }
 
   ngOnInit() {
+
   }
 
-  filterCountry(event : any) {
-    //in a real application, make a request to a remote url with the query and return filtered results, for demo we filter at client side
-    let filtered : any[] = [];
-    let query = event.query;
+  openModal(template: TemplateRef<any>, objClass: any) {
+    this.modalRef = this.modalService.show(template, objClass);
+  }
 
-    for(let i = 0; i < this.countries.length; i++) {
-        let country = this.countries[i];
-        if (country.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
-            filtered.push(country);
-        }
+  doBuscarExpediente(){
+    this._spinner.show();
+    let param={
+      vcNroExpediente: this.filtersForm.value.vcNroExpediente
     }
+    this.busExpedienteService.getWithPost$(param).subscribe(
+      resp=>{
+        this._spinner.hide();
+        this.lstExpediente=resp.lstExpediente;
 
-    this.filteredCountries = filtered;
-}
+      },
+      error=>{
+        this._spinner.hide();
+      }
+    );
+  }
+
+  doBuscarExpedienteDetalle(item :any){
+    this._spinner.show();
+    let param={
+      vcIdExpediente: item.vcIdExpediente,
+      nuAnioExpediente : item.nuAnioExpediente,
+      vcIdAreaExpediente: item.vcIdAreaExpediente,
+      vcIdTipoExpediente : item.vcIdTipoExpediente
+    }
+    this.detalleexpedienteService.getWithPost$(param).subscribe(
+      resp=>{
+        this._spinner.hide();
+        this.objDetalleExpediente=resp;
+
+        let objClass = {          id: 0 ,
+          class: 'modal-lg'
+        };
+      this.openModal(this._templateModal, objClass);
+
+      },
+      error=>{
+        this._spinner.hide();
+      }
+    );
+  }
+
+
 
 }

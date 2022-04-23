@@ -230,3 +230,8 @@ color: #65BD42;
 .red_color{
   color: red !important;
 }
+
+/*Progres bar*/
+::ng-deep .customProgress .ui-progressbar .ui-progressbar-value {
+  background: #65BD42;
+}

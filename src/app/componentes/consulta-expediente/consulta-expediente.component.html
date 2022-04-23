@@ -3,6 +3,18 @@
   <div class="row justify-content-around">
     <div class="ctn-steps step0  col-md-9">
       <div class="container">
+        <div class="row">
+          <div class="col-12">
+              <div class="media border p-0 flex-column flex-md-row" style="border: 0px solid #000 !important">
+                <img src="./assets/images/con_expediente.svg" alt="#" class="mr-3 rounded-circle" style="width:80px;">
+                <div class="media-body align-self-center">
+                  <!-- <h4>Consulta por Número de expediente</h4> -->
+                  <p>Realice una búsqueda por número de expediente.</p>
+                </div>
+              </div>
+          </div>
+      </div>
+<!--
         <div class="card mb-3" style="border: 0px;" >
           <div class="row no-gutters">
             <div class="col-md-1">
@@ -15,7 +27,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
 
         <form [formGroup]="filtersForm">
           <div class="row" >
@@ -28,22 +40,23 @@
                     tag
                     </span></span>
                 </div>
-                <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3" formControlName="vcNroCertificado">
+                <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3" formControlName="vcNroExpediente">
 
               </div>
             </div>
             <div class="col-sm-3 boton_search" >
-              <button type="submit" class="btn btn-success font-mb" style="    margin-top: 10px;"><span
+              <button type="submit" class="btn btn-success font-mb" style="    margin-top: 10px;" (click)="doBuscarExpediente()"><span
                 style="margin-right: 5px;"><i class="fa fa-search"></i></span>Buscar</button>
             </div>
            </div>
           </form>
 
-          <div class="table-responsive">
+          <div class="table-responsive" *ngIf="lstExpediente.length>0">
             <table class="table">
               <thead>
                 <tr class="font-mb">
-                  <th scope="col">Número de expediente</th>
+                  <th scope="col">Marca</th>
+                  <th scope="col" style="min-width: 160px;">Número de expediente</th>
                   <th scope="col">Tipo de procedimiento</th>
                   <th scope="col">Fecha de presentación</th>
                   <th scope="col">Clase</th>
@@ -51,18 +64,47 @@
                 </tr>
               </thead>
               <tbody
-              *ngFor="let item of lstExpedienteRelacionado |  paginate : { itemsPerPage: 5, currentPage: paginaActualExpRel };  let row = index " >
+              *ngFor="let item of lstExpediente |  paginate : { itemsPerPage: 10, currentPage: paginaActual };  let row = index " >
                 <tr class="row-hover">
+                  <td>{{item.vcMarca}}</td>
                   <td>
                     <span class="span_search_cert">
-                      <button pButton pRipple icon="pi pi-search"  iconPos="left"  type="button" label="{{item.vcIdExpediente}} - {{item.nuAnioExpediente}}" class="p-button-success p-button-text"
+                      <button  style="font-size: 13px !important;" pButton pRipple icon="pi pi-search"  iconPos="left"  type="button" label="{{item.vcIdExpediente}} - {{item.nuAnioExpediente}}"
+                      class="p-button-success p-button-text"
+                      (click)="doBuscarExpedienteDetalle(item)"
                       ></button>
                   </span>
                 </td>
-                  <td>{{item.vcTipoExpediente}}</td>
+                  <td>{{item.vcProcedimiento}}</td>
                   <td>{{item.vcFechaPresentacion}}</td>
                   <td>{{item.vcClase}}</td>
-                  <td>Estado</td>
+                  <td style="padding: 0px;">
+                    <div style="text-align: center;">
+                      <ng-template style="text-align: center;" #popTemplate>
+                        <img  [src]="item.vcLogoEstado"  width="250" />
+                      </ng-template>
+                      <div class="media border p-3 flex-column flex-md-row" style="border: 0px solid #000 !important; padding: 0px !important;">
+                        <div style="text-align: center !important;">
+                          <div class="navbar-header">
+                             <a class="navbar-brand">
+                             <img  [src]="item.vcLogoHito" class="img-responsive" style="width: 60px; margin-left: 15px;" />
+                             <!-- <img *ngIf="item.nuEstado!=0" src="https://desfront01.indecopi.gob.pe/cde/01/01_hito_5.svg" class="img-responsive" style="width: 60px; margin-left: 15px;" /> -->
+                             </a>
+                             <div style="font-size: 10px;">{{item.vcDescEstado}}</div>
+                             <div style="font-size: 10px;" *ngIf="item.vcSentidoResolucion!='vacio'">{{item.vcSentidoResolucion}}</div>
+                             <div style="font-size: 10px;" *ngIf="item.vcLink!='vacio'"> <a [href]="item.vcLink" target="_blank"><span class="material-icons">
+                              link
+                              </span></a></div>
+                             <div style="font-size: 10px;" *ngIf="item.vcFechaPublicacion!='vacio'">{{item.vcFechaPublicacion}}</div>
+
+                           </div>
+                        </div>
+                        <div class="media-body align-self-center">
+                        <span placement="auto" class="toopltip" [popover]="popTemplate" triggers="mouseenter:mouseleave" popoverTitle="ESTADO"></span>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -70,7 +112,7 @@
             [responsive]="true"
             previousLabel="Atras"
             nextLabel="Siguiente"
-            (pageChange)="paginaActualExpRel = $event">
+            (pageChange)="paginaActual = $event">
           </pagination-controls>
           </div>
 
@@ -78,3 +120,188 @@
     </div>
   </div>
 </div>
+
+<ng-template #_templateModal>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Detalle del expediente</h4>
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div>
+      <tabset #staticTabs>
+        <tab heading="Seguimiento.">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr class="font-mb">
+                  <th>#</th>
+                  <th>Fecha</th>
+                  <th>Seguimiento</th>
+                </tr>
+              </thead>
+              <tbody *ngFor="let item of objDetalleExpediente?.lstSeguimiento  let row = index " >
+                <tr  class="row-hover">
+                  <th>{{row + 1}}</th>
+                  <td><b>{{item.vcFechaSeguimiento}}</b></td>
+                  <td>{{item.vcSeguimiento}}</td>
+                </tr>
+              </tbody>
+            </table>
+
+          </div>
+        </tab>
+        <tab heading="Datos solicitud y registro.">
+          <div class="table-responsive">
+            <table class="table table-hover" id="job-table">
+              <thead>
+                <tr>
+                  <th scope="col" colspan="4" style="color: beige; background-color: #65BD42;">Expediente Nro: {{objDetalleExpediente?.objDatoExpediente?.vcIdExpediente}} - {{objDetalleExpediente?.objDatoExpediente?.nuAnioExpediente}}</th>
+                </tr>
+              </thead>
+              <tbody class="tableBody">
+                    <tr>
+                      <td class="font-weight-bold" style="text-align: left !important;">Tipo de Expediente:</td>
+                      <td >{{objDetalleExpediente?.objDatoExpediente?.vcIdTipoExpediente}}</td>
+                      <td></td>
+                      <td class="font-weight-bold"></td>
+                    </tr>
+                    <tr>
+                      <td class="font-weight-bold" style="text-align: left !important;">Fecha de presentación:</td>
+                      <td>{{objDetalleExpediente?.objDatoExpediente?.vcFechPresentacion}}</td>
+                      <td class="font-weight-bold" style="text-align: left !important;">Hora de presentación:</td>
+                      <td >{{objDetalleExpediente?.objDatoExpediente?.vcHoraPresentacion}}</td>
+                    </tr>
+                    <tr>
+                      <td class="font-weight-bold" style="text-align: left !important;">Lugar de presentación:</td>
+                      <td>{{objDetalleExpediente?.objDatoExpediente?.vcLugar}}</td>
+                      <td></td>
+                      <td class="font-weight-bold"></td>
+                    </tr>
+                    <tr>
+                      <td class="font-weight-bold" style="text-align: left !important;">Procedimiento:</td>
+                      <td>{{objDetalleExpediente?.objDatoExpediente?.vcProd}}</td>
+                      <td></td>
+                      <td class="font-weight-bold"></td>
+                    </tr>
+                    <tr>
+                      <td class="font-weight-bold" style="text-align: left !important;">Publicado en Gaceta:</td>
+                      <td>{{objDetalleExpediente?.objDatoExpediente?.vcFechaPublicacion}}</td>
+                      <td></td>
+                      <td class="font-weight-bold"></td>
+                    </tr>
+
+              </tbody>
+            </table>
+
+            <table class="table table-hover" id="job-table">
+              <thead>
+                <tr>
+                  <th scope="col" colspan="4" style="color: beige; background-color: #65BD42; width: 100%;">Datos de la Marca</th>
+                </tr>
+              </thead>
+              <tbody class="tableBody">
+                    <tr>
+                      <td class="font-weight-bold" style="text-align: left !important;">Tipo de solicitud:</td>
+                      <td colspan="3" >{{objDetalleExpediente?.objDatoExpediente?.vcTipoSolicitud}}</td>
+                    </tr>
+                    <tr>
+                      <td class="font-weight-bold" style="text-align: left !important;">Fecha de solicitud:</td>
+                      <td>{{objDetalleExpediente?.objDatoExpediente?.vcFechaSolicitud}}</td>
+                      <td class="font-weight-bold" style="text-align: left !important;">Fecha de registro:</td>
+                      <td >{{objDetalleExpediente?.objDatoExpediente?.vcFechaRegistro}}</td>
+                    </tr>
+                    <tr>
+                      <td class="font-weight-bold" style="text-align: left !important;">Nro. de Certificado:</td>
+                      <td>{{objDetalleExpediente?.objDatoExpediente?.vcNroCertificado}}</td>
+                      <td class="font-weight-bold" style="text-align: left !important;">Fecha de publicación:</td>
+                      <td>{{objDetalleExpediente?.objDatoExpediente?.vcFechaPublicacion}}</td>
+                    </tr>
+                    <tr>
+                      <td class="font-weight-bold" style="text-align: left !important;">Fecha de vencimiento:</td>
+                      <td colspan="3">{{objDetalleExpediente?.objDatoExpediente?.vcFechaVencimiento}}</td>
+                    </tr>
+                    <tr>
+                      <td class="font-weight-bold" style="text-align: left !important;">Tipo de presentación:</td>
+                      <td colspan="3">{{objDetalleExpediente?.objDatoExpediente?.vcTipoPresentacion}}</td>
+                    </tr>
+                    <tr>
+                      <td class="font-weight-bold" style="text-align: left !important;">Nro. de clase:</td>
+                      <td colspan="3">{{objDetalleExpediente?.objDatoExpediente?.vcClaseNiza}}</td>
+                    </tr>
+                    <tr>
+                      <td class="font-weight-bold" style="text-align: left !important;">Nro. de clase:</td>
+                      <td colspan="3">{{objDetalleExpediente?.objDatoExpediente?.vcClaseNiza}}</td>
+                    </tr>
+
+                    <tr>
+                      <td class="font-weight-bold" style="text-align: left !important;">Denominacion:</td>
+                      <td colspan="3">{{objDetalleExpediente?.objDatoExpediente?.vcDenominacion}}</td>
+                    </tr>
+
+              </tbody>
+            </table>
+
+            <table class="table table-hover" id="job-table">
+              <thead>
+                <tr>
+                  <th scope="col" colspan="6" style="color: beige; background-color: #65BD42; width: 100%;">Personas Juridicas/Naturales</th>
+                </tr>
+                <tr>
+                  <th scope="col" >Tipo de persona</th>
+                  <th scope="col" >Titular / Representante Legal</th>
+                  <th scope="col"  >Tipo de documento</th>
+                  <th scope="col"  >RUC / DNI / LE</th>
+                  <!-- <th scope="col"  >Personas Juridicas/Naturales</th> -->
+                  <th scope="col" >Domicilio procesal </th>
+                  <!-- <th scope="col"  style="color: beige; background-color: #65BD42; width: 100%;">País, Dep., Prov, Dis.</th> -->
+                </tr>
+              </thead>
+              <tbody class="tableBody" *ngFor="let item of objDetalleExpediente?.lstTitulares  let row = index " >
+                    <tr>
+                      <td>{{item.vcTipoPersona}}</td>
+                      <td>{{item.vcPersona}}</td>
+                      <td>{{item.vcTipoDocumento}}</td>
+                      <!-- <td>{{item.vcDocumento}}</td> -->
+                      <td>{{item.vcDomicilioProcesal}}</td>
+                      <!-- <td>{{item.}}</td> -->
+                    </tr>
+              </tbody>
+            </table>
+
+            <table class="table table-hover" id="job-table">
+              <thead>
+                <tr>
+                  <th scope="col" colspan="4" style="color: beige; background-color: #65BD42; width: 100%;">Conclusión del expediente</th>
+                </tr>
+              </thead>
+              <tbody class="tableBody">
+                    <tr>
+                      <td class="font-weight-bold" style="text-align: left !important;">Fecha de conclusión:</td>
+                      <td >{{objDetalleExpediente?.objDatoExpediente?.vcFechaConclusion}}</td>
+                      <td class="font-weight-bold" style="text-align: left !important;">Nro. de Resolución:</td>
+                      <td>{{objDetalleExpediente?.objDatoExpediente?.vcNroResolucion}}</td>
+                    </tr>
+                    <tr>
+                      <td class="font-weight-bold" style="text-align: left !important;">Tipo de forma de conclusión:</td>
+                      <td colspan="3">{{objDetalleExpediente?.objDatoExpediente?.vcTipoFormaConclusion}}</td>
+
+                    </tr>
+
+                    <tr>
+                      <td class="font-weight-bold" style="text-align: left !important;">Forma de conclusión:</td>
+                      <td colspan="3">{{objDetalleExpediente?.objDatoExpediente?.vcFormaConclusion}}</td>
+                    </tr>
+
+
+              </tbody>
+            </table>
+
+          </div>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+</ng-template>
+

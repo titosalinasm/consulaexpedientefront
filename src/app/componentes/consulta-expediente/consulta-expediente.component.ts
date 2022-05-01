@@ -14,6 +14,9 @@ export class ConsultaExpedienteComponent implements OnInit {
 
   @ViewChild('_templateModal') _templateModal: TemplateRef<any>  ;
 
+  @ViewChild('_templateResolModal') _templateResolModal: TemplateRef<any>  ;
+
+
 
   lstExpediente : any[]=[];
   paginaActual : any=1;
@@ -24,10 +27,12 @@ export class ConsultaExpedienteComponent implements OnInit {
 
   objDetalleExpediente : any;
 
+  lstResolucion :any =[];
+
   filtersForm = this.formBuilder.group({
     // vcNroExpediente: ['412879-2010', [Validators.required]],
     // vcNroExpediente: ['215140-2004', [Validators.required]],
-       vcNroExpediente: ['860373-2020', [Validators.required]],
+       vcNroExpediente: ['622098-2015', [Validators.required]],
 
 
   });
@@ -90,6 +95,15 @@ export class ConsultaExpedienteComponent implements OnInit {
         this._spinner.hide();
       }
     );
+  }
+
+  doAbrirResolucion(item : any){
+    this.lstResolucion=item;
+    let objClass = {
+      id: 1 ,
+      class: 'modal-lg'
+    };
+  this.openModal(this._templateResolModal, objClass);
   }
 
 

@@ -96,7 +96,9 @@
                               link
                               </span></a></div>
                              <div style="font-size: 10px;" *ngIf="item.vcFechaPublicacion!='vacio'">{{item.vcFechaPublicacion}}</div>
-
+                             <div style="font-size: 10px;" *ngIf="item.lstResolucion.length!=0"><span class="material-icons" (click)="doAbrirResolucion(item.lstResolucion)">
+                              description
+                              </span></div>
                            </div>
                         </div>
                         <div class="media-body align-self-center">
@@ -301,6 +303,37 @@
           </div>
         </tab>
       </tabset>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #_templateResolModal>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Resoluciones</h4>
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr class="font-mb">
+            <th scope="col">#</th>
+            <th scope="col" >Resolución</th>
+            <th scope="col">Materia</th>
+            <th scope="col">Documento</th>
+          </tr>
+        </thead>
+        <tbody *ngFor="let item of lstResolucion;  let row = index " >
+          <td>{{row + 1}}</td>
+          <td style="font-size: 12px; font-weight: 800;">{{item.vcNroResol}} - {{item.vcAnioResol}}</td>
+          <td style="font-size: 12px;">{{item.vcMateria}}</td>
+          <td style="text-align: center;"><a [href]="item.vcLinkDescarga"><span class="material-icons">
+            cloud_download
+            </span></a></td>
+        </tbody>
+      </table>
     </div>
   </div>
 </ng-template>

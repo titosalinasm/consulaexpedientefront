@@ -235,3 +235,29 @@ color: #65BD42;
 ::ng-deep .customProgress .ui-progressbar .ui-progressbar-value {
   background: #65BD42;
 }
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.input_style{
+font-size: 14px;
+    box-sizing: border-box;
+    border: none;
+    box-shadow: none;
+    outline: 0;
+    background-color: #fff;
+    color: rgba(0,0,0,.87);
+    width: 100%;
+    padding: 0 15px;
+    line-height: 40px;
+    height: 40px;
+
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 2px 1px -1px rgb(0 0 0 / 12%);
+    position: relative;
+    overflow: visible;
+    height: 40px;
+}
+
+input::-webkit-calendar-picker-indicator {
+  display: none !important;
+}

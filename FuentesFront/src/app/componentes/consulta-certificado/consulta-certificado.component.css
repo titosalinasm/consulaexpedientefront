@@ -1,0 +1,24 @@
+.status_cert {
+  /* background: yellow; */
+  height: 80px;
+  width: 80px;
+  /*IMPORTANTE*/
+  color: #65BD42;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  border: 8px solid #65BD42;
+  float: right;
+  font-size: 35px !important;
+}
+
+
+ .toopltip {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  margin-top: -13px;
+  /* margin-right: 35px !important; */
+}
+

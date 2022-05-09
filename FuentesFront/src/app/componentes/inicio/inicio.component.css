@@ -1,0 +1,127 @@
+
+h1 {
+  font-family: montserrat-bold,Arial;
+  color: rgb(0, 0, 0);
+  /* font-size: 1.5rem; */
+  line-height: 1.5rem;
+  /* margin-bottom: 32px; */
+}
+/* .ctn-steps  */
+h3 {
+  font-family: montserrat-bold,Arial;
+  font-size: 1.125rem;
+  line-height: 1;
+  margin-bottom: 0;
+}
+
+/* .ctn-steps  */
+p {
+  font-family: montserrat-regular,Arial;
+  font-size: .875rem;
+  line-height: 1;
+  /* margin-bottom: 18px; */
+}
+
+.ctn-sector {
+  padding: 25px 0 40px;
+}
+
+/*.ctn-sector */.sector {
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+  padding-left: 38px;
+}
+
+.lnkSector {
+  display: block;
+  text-align: center;
+  width: 160px;
+  height: 160px;
+  border: 2px solid #65BD42;
+  border-radius: 8px;
+  color: #000;
+  padding: 24px 0 12px;
+  box-shadow: 0px 0px 2px 1px #e4e4e4;
+}
+
+.lnkSector:hover {
+  text-decoration: none;
+  background-color: rgba(101, 189, 66, 0.5);
+  /* background-color: #c0e8f6; */
+}
+
+.lnkSector p{
+  font-weight: bold;
+}
+
+.sector .toopltip {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  margin-top: -13px;
+}
+
+.sector{
+  margin-right: 15px;
+}
+
+.toopltip {
+  display: inline-block;
+  width: 29px;
+  height: 27px;
+  background: url(/assets/images/info_icon.png) no-repeat;
+  vertical-align: top;
+  cursor: pointer;
+}
+
+
+.toopltip._none {
+  display: inline-block;
+  width: 29px;
+  height: 27px;
+  background: transparent;
+  vertical-align: top;
+  cursor: pointer;
+}
+
+@media (max-width: 575px) {
+  ._txtley{
+      width: 100%;
+      text-align: justify;
+  }
+}
+
+@media (min-width: 576px) {
+  ._txtley{
+      width: 800px;
+      text-align: justify;
+  }
+}
+
+._link{
+  color: #007bff !important;
+  text-decoration: none !important;
+}
+._link:hover{
+  cursor: pointer !important;
+  text-decoration: underline !important;
+}
+
+@media (max-width: 575px) {
+  ._img1{ display: none !important; }
+  ._img2{ display: inline !important; }
+}
+
+@media (min-width: 576px) {
+  ._img1{ display: inline !important; }
+  ._img2{ display: none !important; }
+}
+
+.text_center{
+text-align: center;
+}
+
+.text_center h1 {
+color: #c3014d;
+}

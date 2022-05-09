@@ -1,0 +1,214 @@
+<br>
+<p-toast position="top-right"></p-toast>
+
+<div class="container">
+  <div class="row justify-content-around">
+    <div class="ctn-steps step0  col-md-9">
+      <div class="container">
+
+        <div class="card mb-3" style="border: 0px;" >
+          <div class="row no-gutters">
+            <div class="col-md-1">
+              <img src="./assets/images/con_certificado_icon.svg" class="card-img" style="width: 80px;">
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h5 class="card-title">Consulta por Número de Certificado</h5>
+                <p class="card-text">Realice la búsqueda por número de certificado.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <form [formGroup]="filtersForm">
+        <label for="basic-url"><b>Ingrese N° de Certificado</b><app-tooltip popDescripcion="Lo brinda la DSD">
+        </app-tooltip></label>
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3" formControlName="vcNroCertificado" maxlength="25">
+        </div>
+
+        <label for="basic-url"><b>Tipo de Certificado (Opcional)</b><app-tooltip popDescripcion="Lo brinda la DSD">
+        </app-tooltip></label>
+
+        <div class="input-group mb-3">
+          <select class="form-control" formControlName="vcTipoSolicitud">
+            <option value="-1">Seleccione tipo de certificado</option>
+            <option *ngFor="let item of lstTipoSolicitud" [value]="item.vcCodigoSolicitud">
+              {{item.vcDescSolicitud}}</option>
+          </select>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+           <re-captcha
+           (resolved)="resolved($event)"
+           (error)="onError($event)"
+           errorMode="handled"
+           size="invisible"
+         ></re-captcha>
+          </div>
+        </div>
+        </form>
+
+        <div class="row">
+          <div class="col-sm text-center">
+            <button type="submit" class="btn btn-success font-mb" (click)="doBuscarCertificado()"><span
+                style="margin-right: 5px;"><i class="fa fa-search"></i></span>Buscar</button>
+            <button type="submit" class="btn btn-secondary font-mb ml-1" (click)="doLimpiar()" ><span
+                style="margin-right: 5px;"><i class="fa fa-refresh" ></i></span>Limpiar</button>
+          </div>
+        </div>
+        <br>
+        <div *ngIf="objCertificados!=null">
+        <div class="row" style="margin-bottom: 15px;">
+          <div class="col-sm-12">
+          <p-panel header="Marca y Estado del Certificado">
+            <div class="row" >
+            <div class="col-sm-9" style="font-size: 14px;">
+              <img *ngIf="objCertificados?.vcLogo!='-1'" [src]="objCertificados?.vcLogo" style="max-width: 150px; max-height: 150px;" />
+              <br *ngIf="objCertificados?.vcLogo!='-1'">
+              <b>Clase(s):</b> {{objCertificados?.vcClases}}<br>
+              <b>Tipo de Solicitud:</b> {{objCertificados?.vcTipoSolicitud}}<br>
+              <b>Tipo de Signo: </b> {{objCertificados?.vcTipoSigno}}<br>
+              <b *ngIf="objCertificados?.vcIdTipoSolicitud!='03'">Denominación:</b>
+              <b *ngIf="objCertificados?.vcIdTipoSolicitud=='03'">Palabra o Frase:</b>
+              {{objCertificados?.vcDenominacion}}<br>
+             </div>
+             <div class="col-sm-3">
+              <div class="row">
+                <div class="col-sm-12" style="text-align: center;">
+                  <img *ngIf="objCertificados?.vcEstado=='A'" src="./assets/status/status_vigente.svg"  width="80"/>
+                  <img *ngIf="objCertificados?.vcEstado=='VC'" src="./assets/status/status_vigente.svg"  width="80"/>
+                  <img *ngIf="objCertificados?.vcEstado=='C'" src="./assets/status/status_cancelado.svg"  width="80"/>
+                  <img *ngIf="objCertificados?.vcEstado=='U'" src="./assets/status/status_caduco.svg"  width="80"/>
+                  <span placement="auto" class="toopltip" popover="Texto lo brinda la DSD" triggers="mouseenter:mouseleave"
+                  >
+                </span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12" style="text-align: center; font-size: 10px;">
+                  <b>Certificado {{objCertificados?.vcNroCertificado}}</b>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12" style="text-align: left; font-size: 10px;">
+                  <b><div [innerHTML]="objCertificados?.vcDescEstado"></div></b>
+                </div>
+              </div>
+              <div class="row" *ngIf="objCertificados?.vcCertOrigenDiv!=null || objCertificados?.vcCertOrigenDiv!='' ">
+                <div class="col-sm-12" style="text-align: left; font-size: 10px;">
+
+                  <b><div [innerHTML]="objCertificados?.vcCertOrigenDiv"></div></b>
+                </div>
+              </div>
+              <div class="row" *ngIf="objCertificados?.vcCertRelDiv!=null || objCertificados?.vcCertRelDiv!='' ">
+                <div class="col-sm-12" style="text-align: left; font-size: 10px;">
+
+                  <b><div [innerHTML]="objCertificados?.vcCertRelDiv"></div></b>
+                </div>
+              </div>
+            </div>
+          </div>
+          </p-panel>
+          </div>
+        </div>
+
+        <div class="row" style="margin-bottom: 15px;">
+          <div class="col-sm-12">
+            <p-panel header="Titular(es)">
+              <div [innerHTML]="objCertificados?.listTitulares"></div>
+          </p-panel>
+          </div>
+        </div>
+
+        <div class="row" style="margin-bottom: 15px;">
+          <div class="col-sm-12">
+            <p-panel header="Expedientes relacionados al certificado">
+              <p-progressBar *ngIf="blLoadinExpReal" mode="indeterminate" [style]="{'height': '6px'}" [ngClass]="'customProgress'"></p-progressBar>
+                        <div class="table-responsive" *ngIf="!blLoadinExpReal">
+                          <table class="table">
+                            <thead>
+                              <tr class="font-mb">
+                                <th scope="col">Número de expediente</th>
+                                <th scope="col">Tipo de procedimiento</th>
+                                <th scope="col">Fecha de presentación</th>
+                                <th scope="col">Clase</th>
+                                <th scope="col">Estado</th>
+                              </tr>
+                            </thead>
+                            <tbody
+                            *ngFor="let item of lstExpedienteRelacionado |  paginate : { itemsPerPage: 5, currentPage: paginaActualExpRel };  let row = index " >
+                              <tr class="row-hover">
+                                <td>
+                                  <span class="span_search_cert">
+                                    <button style="font-size: 13px !important;" pButton pRipple icon="pi pi-search"  iconPos="left"  type="button" label="{{item.vcIdExpediente}} - {{item.nuAnioExpediente}}" class="p-button-success p-button-text"
+                                    ></button>
+                                </span>
+                              </td>
+                                <td>{{item.vcTipoExpediente}}</td>
+                                <td>{{item.vcFechaPresentacion}}</td>
+                                <td>{{item.vcClase}}</td>
+                                <td>
+                                  <div style="text-align: center;">
+                                    <img *ngIf="item.nuEstado==0" src="./assets/status/status_expediente_tramite.svg" width="60"/>
+                                    <img *ngIf="item.nuEstado>0" src="./assets/status/status_expediente_concluido.svg" width="60"/>
+                                    <span  *ngIf="item.nuEstado==0">En tramite</span>
+                                    <span *ngIf="item.nuEstado>0">Concluido</span>
+                                  </div>
+
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                          <pagination-controls
+                          [responsive]="true"
+                          previousLabel="Atras"
+                          nextLabel="Siguiente"
+                          (pageChange)="paginaActualExpRel = $event">
+                        </pagination-controls>
+                        </div>
+          </p-panel>
+          </div>
+        </div>
+         </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<p-dialog header="Búsqueda por certificado" [(visible)]="displayMaximizable" [modal]="true" [style]="{width: '70vw'}" [maximizable]="true"
+    [draggable]="false" [resizable]="false">
+    <p *ngIf="lstCertificados.length==1">Se encontraró 1 certificado para los parametros de búsqueda <button pButton pRipple type="button" style="height: 25px;" class="p-button-rounded p-button-secondary p-button-sm">{{filtersForm.value.vcNroCertificado}}</button></p>
+    <p *ngIf="lstCertificados.length>1">Se encontraron {{lstCertificados.length}} certificados para los parametros de búsqueda <button pButton pRipple type="button" style="height: 25px;" class="p-button-rounded p-button-secondary p-button-sm">{{filtersForm.value.vcNroCertificado}}</button></p>
+
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr class="font-mb">
+            <th scope="col">Nro. de Certificado</th>
+            <th scope="col">Marca</th>
+            <th scope="col">Tipo de Signo</th>
+            <th scope="col">Clases</th>
+            <th scope="col">Titulares</th>
+          </tr>
+        </thead>
+        <tbody *ngFor="let item of lstCertificados; let row = index" id="{{row}}">
+          <tr class="row-hover">
+            <td>
+              <span class="span_search_cert">
+                <button pButton pRipple icon="pi pi-search"  iconPos="left"  type="button" label="{{item.vcNroCertificado}}" class="p-button-success p-button-text"
+                (click)="doSeleccionado(item)"></button>
+            </span>
+          </td>
+            <td>{{item.vcDenominacion}}</td>
+            <td>{{item.vcTipoSigno}}</td>
+            <td>{{item.vcClases}}</td>
+            <td>{{item.vcTitulares}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+        <ng-template pTemplate="footer">
+            <p-button icon="pi pi-check" (click)="displayMaximizable=false" label="Ok" styleClass="p-button-text"></p-button>
+        </ng-template>
+</p-dialog>

@@ -33,6 +33,10 @@ import { MessageService } from 'primeng/api';
 import { DetalleexpedienteService } from './servicios/detalleexpediente.service';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { RECAPTCHA_V3_SITE_KEY, RecaptchaV3Module } from 'ng-recaptcha';
+import { environment } from '../environments/environment';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import {AutocompleteLibModule} from 'angular-ng-autocomplete';
 
 
 @NgModule({
@@ -64,8 +68,11 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     NgxPaginationModule,
     ToastModule,
     TabsModule.forRoot(),
-    ModalModule.forRoot()
-    // AutoCompleteModule
+    ModalModule.forRoot(),
+    RecaptchaV3Module,
+    BsDropdownModule.forRoot(),
+    AutocompleteLibModule
+
   ],
   providers: [
     ConfiguracionService,
@@ -74,11 +81,17 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     BusExpedienteService,
     MessageService,
     DetalleexpedienteService,
+    {
+      provide: RECAPTCHA_V3_SITE_KEY,
+      useValue: environment.recaptcha.siteKey,
+    },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true}
   ],
   exports:[CommonModule,
-    NgxPaginationModule],
+           NgxPaginationModule,
+
+           ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class AppModule { }
+export class AppModule {  }

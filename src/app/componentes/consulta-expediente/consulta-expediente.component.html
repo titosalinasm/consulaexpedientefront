@@ -3,51 +3,62 @@
   <div class="row justify-content-around">
     <div class="ctn-steps step0  col-md-9">
       <div class="container">
-        <div class="row">
-          <div class="col-12">
-              <div class="media border p-0 flex-column flex-md-row" style="border: 0px solid #000 !important">
-                <img src="./assets/images/con_expediente.svg" alt="#" class="mr-3 rounded-circle" style="width:80px;">
-                <div class="media-body align-self-center">
-                  <!-- <h4>Consulta por Número de expediente</h4> -->
-                  <p>Realice una búsqueda por número de expediente.</p>
-                </div>
-              </div>
-          </div>
-      </div>
-<!--
         <div class="card mb-3" style="border: 0px;" >
           <div class="row no-gutters">
             <div class="col-md-1">
-              <img src="./assets/images/con_expediente.svg" class="card-img" style="width: 80px;">
+              <img src="./assets/images/con_expediente_icon.svg" class="card-img" style="width: 80px;">
             </div>
             <div class="col-md-8">
               <div class="card-body">
-                <h5 class="card-title">Consulta por Número de expediente</h5>
-                <p class="card-text">Realice una búsqueda por número de expediente.</p>
+                <h5 class="card-title">Consulta por Número de Expediente</h5>
+                <p class="card-text">Realice la búsqueda por número de Expediente.</p>
               </div>
             </div>
           </div>
-        </div> -->
+        </div>
 
-        <form [formGroup]="filtersForm">
+
+        <form  [formGroup]="filtersForm" >
           <div class="row" >
-            <div class="col-sm-9" >
-              <label for="basic-url"><b>Ingrese N° de Expediente</b><app-tooltip popDescripcion="Lo brinda la DSD">
-              </app-tooltip></label>
-              <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                  <span class="input-group-text" ><span class="material-icons">
-                    tag
-                    </span></span>
-                </div>
-                <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3" formControlName="vcNroExpediente">
+            <div class="col-sm-12" >
 
-              </div>
+              <div class="row d-flex justify-content-center">
+                <div class="col-md-12">
+                    <div class="card p-3  py-4"  style="border: 0px;">
+                      <label for="basic-url"><b>Ingrese N° de Expediente</b><app-tooltip popDescripcion="Lo brinda la DSD">
+                      </app-tooltip></label>
+                        <div class="row g-9 mt-2">
+                            <div class="col-md-6 p-0">
+                                <input maxlength="7" id="input_auto_complete" type="text" class="input_style" placeholder="Número del expediente" formControlName="vcNroExpediente">
+                            </div>
+                            <div class="col-md-3 p-0">
+                              <input type="text" (keyup)="searchOnKeyUp($event)" list="SearchResults" class="input_style" placeholder="Año del expediente" maxlength="4" formControlName="nuAnioExpediente" />
+                              <datalist id="SearchResults" class="input_style"  style="content: '\f073';">
+                                <option *ngFor="let item of lstAnios" [value]="item.id">{{item.id}}</option>
+                              </datalist>
+                            </div>
+                            <div class="col-md-3">
+                                <button (click)="doBuscarExpediente()"  class="btn btn-success btn-block"><span><i class="fa fa-search"></i></span> Buscar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
-            <div class="col-sm-3 boton_search" >
-              <button type="submit" class="btn btn-success font-mb" style="    margin-top: 10px;" (click)="doBuscarExpediente()"><span
-                style="margin-right: 5px;"><i class="fa fa-search"></i></span>Buscar</button>
             </div>
+
+           </div>
+
+           <div class="row">
+             <div class="col-sm-12">
+              <re-captcha
+              (resolved)="resolved($event)"
+              (error)="onError($event)"
+              errorMode="handled"
+              size="invisible"
+            ></re-captcha>
+             </div>
            </div>
           </form>
 
@@ -68,12 +79,10 @@
                 <tr class="row-hover">
                   <td>{{item.vcMarca}}</td>
                   <td>
-                    <span class="span_search_cert">
-                      <button  style="font-size: 13px !important;" pButton pRipple icon="pi pi-search"  iconPos="left"  type="button" label="{{item.vcIdExpediente}} - {{item.nuAnioExpediente}}"
-                      class="p-button-success p-button-text"
-                      (click)="doBuscarExpedienteDetalle(item)"
-                      ></button>
-                  </span>
+                  <button type="button" class="btn btn-outline-default waves-effect" style="color: #65bd42; font-weight: 500;"  (click)="doBuscarExpedienteDetalle(item)">
+                    <i class="fas fa-search pr-2" aria-hidden="true"></i>
+                    <span style="text-decoration-line: underline;">{{item.vcIdExpediente}}-{{item.nuAnioExpediente}}</span>
+                  </button>
                 </td>
                   <td>{{item.vcProcedimiento}}</td>
                   <td>{{item.vcFechaPresentacion}}</td>
@@ -88,7 +97,6 @@
                           <div class="navbar-header">
                              <a class="navbar-brand">
                              <img  [src]="item.vcLogoHito" class="img-responsive" style="width: 60px; margin-left: 15px;" />
-                             <!-- <img *ngIf="item.nuEstado!=0" src="https://desfront01.indecopi.gob.pe/cde/01/01_hito_5.svg" class="img-responsive" style="width: 60px; margin-left: 15px;" /> -->
                              </a>
                              <div style="font-size: 10px;">{{item.vcDescEstado}}</div>
                              <div style="font-size: 10px;" *ngIf="item.vcSentidoResolucion!='vacio'">{{item.vcSentidoResolucion}}</div>
@@ -146,8 +154,11 @@
               <tbody *ngFor="let item of objDetalleExpediente?.lstSeguimiento  let row = index " >
                 <tr  class="row-hover">
                   <th>{{row + 1}}</th>
-                  <td><b>{{item.vcFechaSeguimiento}}</b></td>
-                  <td>{{item.vcSeguimiento}}</td>
+                  <td>{{item.vcFechaSeguimiento}}</td>
+                  <td>{{item.vcSeguimiento}}
+                    <app-tooltip *ngIf="item.vcInformativo!=null" [popDescripcion]="item.vcInformativo">
+                    </app-tooltip>
+                   </td>
                 </tr>
               </tbody>
             </table>

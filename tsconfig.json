@@ -18,6 +18,7 @@
     "strictPropertyInitialization": false,
     "target": "es2015",
     "module": "es2020",
+    "strictNullChecks":false,
     "lib": [
       "es2018",
       "dom"
@@ -25,8 +26,9 @@
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
-    "strictInjectionParameters": true,
+    "strictInjectionParameters": false,
     "strictInputAccessModifiers": true,
-    "strictTemplates": true
+    "strictTemplates": true,
+    "enableIvy": false
   }
 }

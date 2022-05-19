@@ -11,6 +11,11 @@ import { TokenService } from 'src/app/servicios/token.service';
 import { ConfiguracionService } from 'src/app/servicios/configuracion.service';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { DetalleexpedienteService } from 'src/app/servicios/detalleexpediente.service';
+import { ImagenService } from 'src/app/servicios/imagen.service';
+import { LemaService } from 'src/app/servicios/lema.service';
+
+import { ToastrService } from 'ngx-toastr';
+import { NombrelogoService } from 'src/app/servicios/nombrelogo.service';
 
 @Component({
   selector: 'app-consulta-certificado',
@@ -21,7 +26,7 @@ export class ConsultaCertificadoComponent implements OnInit {
 
   @ViewChild('_templateModal') _templateModal: TemplateRef<any>  ;
   modalRef: BsModalRef;
-  @ViewChild('_templateResolModal') _templateResolModal: TemplateRef<any>  ;
+  @ViewChild('_templateResolModal') _templateResolModal: TemplateRef<any> ;
 
   //controls
   displayMaximizable: boolean=false;
@@ -43,6 +48,11 @@ export class ConsultaCertificadoComponent implements OnInit {
 
   objDetalleExpediente : any;
   lstResolucion :any =[];
+  objLogoBase64 : any;
+
+  lstLema : any=[];
+
+  lstPersonas : any[]=[];
 
   constructor(
     private globalService: GlobalService,
@@ -55,6 +65,10 @@ export class ConsultaCertificadoComponent implements OnInit {
     private messageService: MessageService,
     private detalleexpedienteService: DetalleexpedienteService,
     private modalService: BsModalService,
+    private imagenService : ImagenService,
+    private toastr: ToastrService,
+    private lemaService : LemaService,
+    private nombrelogoService : NombrelogoService
     ) {
       this.obtenerToken();
 
@@ -92,8 +106,47 @@ export class ConsultaCertificadoComponent implements OnInit {
     this.objCertificados=item;
     this.objCertificados.listTitulares=titularesLis;
 
+    // if(item.vcLogo==null){
+    // this.obtenerImagenes(item);
+    // }
+
+    this.doNombreLogo(item);
+
     this.doCargaExpeRelacionado(item.vcNroCertificado, item.nuAnioRegistro);
 
+    this.doObtenerLema(item);
+
+  }
+
+  doObtenerLema(item : any){
+    let param={
+      vcNroCertificado : item.vcNroCertificado,
+      nuAnioRegistro : item.nuAnioRegistro
+    }
+    this.lemaService.getWithPost$(param).subscribe(
+      resp=>{
+        this.lstLema=resp.lstLema;
+      },
+      error=>{
+        console.log("Ocurrio un error al obtener el lema");
+      }
+    );
+  }
+
+  doNombreLogo(item : any){
+    let param={
+      vcNroCertificado : item.vcNroCertificado,
+      nuAnioRegistro : item.nuAnioRegistro
+    }
+    this.nombrelogoService.getWithPost$(param).subscribe(
+      resp=>{
+        // this.lstLema=resp.vcNomLogo;
+      this.obtenerImagenes(resp.vcNomLogo);
+      },
+      error=>{
+        console.log("Ocurrio un error al obtener el lema");
+      }
+    );
   }
 
   showMaximizableDialog() {
@@ -104,11 +157,12 @@ export class ConsultaCertificadoComponent implements OnInit {
     this.objCertificados=null;
     this.lstCertificados=[];
     this.lstExpediente=[];
+    this.objLogoBase64=null;
   }
 
   doBuscarCertificado(){
 
-    this._spinner.show();
+
 
     this.doLimpiar();
 
@@ -116,10 +170,18 @@ export class ConsultaCertificadoComponent implements OnInit {
       vcNroCertificado : this.filtersForm.value.vcNroCertificado,
       vcTipoSolicitud : this.filtersForm.value.vcTipoSolicitud
     }
+    if(this.filtersForm.value.vcNroCertificado){
+      if(this.filtersForm.value.vcNroCertificado!='' && this.filtersForm.value.vcNroCertificado!=null){
+        this._spinner.show();
     this.busCertificadoService.getWithPost$(param).subscribe(
       resp=>{
         this._spinner.hide();
         this.lstCertificados=resp.lstCertificado;
+
+        if(this.lstCertificados.length<1){
+          this.toastr.warning('No se encontraron resultados para tu busqueda, por favor cambia los parametros e intenta nuevamente.','Resultado');
+        }
+
         if(this.lstCertificados.length==1){
 
           this.doSeleccionado(this.lstCertificados[0]);
@@ -128,8 +190,6 @@ export class ConsultaCertificadoComponent implements OnInit {
         }else{
           if(this.lstCertificados.length>0){
              this.showMaximizableDialog();
-          }else{
-            this.messageService.add({severity:'warn', summary: 'Advertencia', detail: 'No se ha encontrado ningun certificado'});
           }
         }
       },
@@ -137,6 +197,13 @@ export class ConsultaCertificadoComponent implements OnInit {
         this._spinner.hide();
       }
     );
+      }else{
+        this.toastr.warning('Por favor ingrese algún valor', 'Advertencia');
+      }
+
+    }else{
+      this.toastr.warning('Por favor ingrese algún valor', 'Advertencia');
+    }
   }
 
   doCargaExpeRelacionado(vcNroCertificado: string, nuAnioRegistro: number){
@@ -206,6 +273,22 @@ export class ConsultaCertificadoComponent implements OnInit {
       resp=>{
         this._spinner.hide();
         this.objDetalleExpediente=resp;
+        let lstPersonaTmp1 : any[]=resp.lstTitulares;
+        let lstPersonaTmp2=resp.lstTitulares;
+
+
+        let lstTitulares=lstPersonaTmp1.filter(p => p.vcIdRepresentado==null);
+        let lstRepresentantes=lstPersonaTmp1.filter(p => p.vcIdRepresentado!=null);
+
+        let k=0
+        for(let i=0; i<lstTitulares.length; i++){
+          lstTitulares[k].lstRepresentes=lstRepresentantes.filter(p => p.vcIdRepresentado==lstTitulares[i].vcIdPersona);
+          k++;
+        }
+
+        this.lstPersonas=lstTitulares;
+
+        console.log(this.lstPersonas);
 
         let objClass = {          id: 0 ,
           class: 'modal-lg'
@@ -227,6 +310,39 @@ export class ConsultaCertificadoComponent implements OnInit {
     };
   this.openModal(this._templateResolModal, objClass);
   }
+
+  obtenerImagenes(vcLogo : any) {
+      if (vcLogo!='null') {
+        this.imagenService.getImagen$(vcLogo).subscribe(
+          resp => {
+          let reader = new FileReader();
+          reader.addEventListener("load", () => {
+            this.objLogoBase64=reader.result;
+          }, false);
+          if (resp) {
+            reader.readAsDataURL(resp);
+          }
+        }, error => {
+
+        });
+      }
+
+  }
+
+doValidacionInputDoc(event: any) {
+  let flag = false;
+  var codigo = event.which || event.keyCode;
+  console.log(codigo)
+  if (codigo != 9 && codigo != 16 && codigo != 17 && codigo != 13 && codigo!=32) {
+      // let regx = /^[^<>*@#$&%+{}'°¬!/"()´.,;-_$]*$/;
+      let regx =/^[a-zA-Z0-9 ]+$/;
+      let result = regx.test(event.key);
+      if (result) {
+        flag = true;
+      }
+  }
+  return flag;
+}
 
   openModal(template: TemplateRef<any>, objClass: any) {
     this.modalRef = this.modalService.show(template, objClass);

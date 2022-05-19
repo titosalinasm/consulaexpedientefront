@@ -20,14 +20,18 @@
           </div>
         </div>
         <form [formGroup]="filtersForm">
-        <label for="basic-url"><b>Ingrese N° de Certificado</b><app-tooltip popDescripcion="Lo brinda la DSD">
-        </app-tooltip></label>
+        <label for="basic-url"><b>Ingrese N° de Certificado</b>
+          <!-- <app-tooltip popDescripcion="Lo brinda la DSD">
+        </app-tooltip> -->
+      </label>
         <div class="input-group mb-3">
-          <input type="text" class="input_style" id="basic-url" aria-describedby="basic-addon3" formControlName="vcNroCertificado" maxlength="9">
+          <input type="text" class="input_style" id="basic-url" aria-describedby="basic-addon3" formControlName="vcNroCertificado" maxlength="9" (keypress)="doValidacionInputDoc($event)" style="text-transform:uppercase">
         </div>
 
-        <label for="basic-url"><b>Tipo de Certificado (Opcional)</b><app-tooltip popDescripcion="Lo brinda la DSD">
-        </app-tooltip></label>
+        <label for="basic-url"><b>Tipo de Certificado (Opcional)</b>
+          <!-- <app-tooltip popDescripcion="Lo brinda la DSD">
+        </app-tooltip> -->
+      </label>
 
         <div class="input-group mb-3">
           <select class="input_style" formControlName="vcTipoSolicitud">
@@ -63,8 +67,8 @@
           <p-panel header="Marca y Estado del Certificado">
             <div class="row" >
             <div class="col-sm-9" style="font-size: 14px;">
-              <img *ngIf="objCertificados?.vcLogo!='-1'" [src]="objCertificados?.vcLogo" style="max-width: 150px; max-height: 150px;" />
-              <br *ngIf="objCertificados?.vcLogo!='-1'">
+              <img *ngIf="objLogoBase64!=null && objLogoBase64!=''" [src]="objLogoBase64" style="max-width: 150px; max-height: 150px;" />
+              <br *ngIf="objLogoBase64!=null && objLogoBase64!=''">
               <b>Clase(s):</b> {{objCertificados?.vcClases}}<br>
               <b>Tipo de Solicitud:</b> {{objCertificados?.vcTipoSolicitud}}<br>
               <b>Tipo de Signo: </b> {{objCertificados?.vcTipoSigno}}<br>
@@ -81,6 +85,7 @@
                   <img *ngIf="objCertificados?.vcEstado=='4'" src="./assets/status/status_4.svg"  width="80"/>
                   <img *ngIf="objCertificados?.vcEstado=='5'" src="./assets/status/status_5.svg"  width="80"/>
                   <img *ngIf="objCertificados?.vcEstado=='6'" src="./assets/status/status_6.svg"  width="80"/>
+
                   <span *ngIf="objCertificados?.vcEstado=='1'" placement="auto" class="toopltip_1" popover="Certificado Vigente" triggers="mouseenter:mouseleave"></span>
                   <span *ngIf="objCertificados?.vcEstado=='2'" placement="auto" class="toopltip_1" popover="Certificado Cancelado" triggers="mouseenter:mouseleave"></span>
                   <span *ngIf="objCertificados?.vcEstado=='3'" placement="auto" class="toopltip_1" popover="Certificado con clase Cancelada" triggers="mouseenter:mouseleave"></span>
@@ -90,25 +95,13 @@
                 </div>
               </div>
               <div class="row">
-                <div class="col-sm-12" style="text-align: center; font-size: 10px;">
-                  <b>Certificado {{objCertificados?.vcNroCertificado}}</b>
-                </div>
-              </div>
-              <div class="row">
                 <div class="col-sm-12" style="text-align: left; font-size: 10px;">
                   <b><div [innerHTML]="objCertificados?.vcDescEstado"></div></b>
                 </div>
               </div>
-              <div class="row" *ngIf="objCertificados?.vcCertOrigenDiv!=null || objCertificados?.vcCertOrigenDiv!='' ">
+              <div class="row" *ngIf="objCertificados?.vcDivRecla!=null || objCertificados?.vcDivRecla!='' ">
                 <div class="col-sm-12" style="text-align: left; font-size: 10px;">
-
-                  <b><div [innerHTML]="objCertificados?.vcCertOrigenDiv"></div></b>
-                </div>
-              </div>
-              <div class="row" *ngIf="objCertificados?.vcCertRelDiv!=null || objCertificados?.vcCertRelDiv!='' ">
-                <div class="col-sm-12" style="text-align: left; font-size: 10px;">
-
-                  <b><div [innerHTML]="objCertificados?.vcCertRelDiv"></div></b>
+                  <b><div [innerHTML]="objCertificados?.vcDivRecla"></div></b>
                 </div>
               </div>
             </div>
@@ -125,6 +118,34 @@
           </div>
         </div>
 
+        <div class="row" style="margin-bottom: 15px;" *ngIf="lstLema.length>0">
+          <div class="col-sm-12">
+          <p-panel header="Lema(s) asociado(s) al certificado.">
+            <div class="table-responsive"  *ngIf="!blLoadinExpReal">
+              <table class="table">
+                <thead>
+                  <tr class="font-mb">
+                    <th scope="col">Clase</th>
+                    <th scope="col">Lema</th>
+                    <th scope="col">Vigencia</th>
+                    <th scope="col">Fecha de expiración</th>
+                  </tr>
+                </thead>
+                <tbody
+                *ngFor="let item of lstLema;  let row = index " >
+                  <tr class="row-hover">
+                    <td>{{item.vcIdClase}}</td>
+                    <td>{{item.vcFrase}}</td>
+                    <td>{{item.vcVigencia}}</td>
+                    <td>{{item.vcFechaExpiracion}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </p-panel>
+          </div>
+        </div>
+
         <div class="row" style="margin-bottom: 15px;">
           <div class="col-sm-12">
             <p-panel header="Expedientes relacionados al certificado">
@@ -133,6 +154,7 @@
                 <table class="table">
                   <thead>
                     <tr class="font-mb">
+                      <th scope="col">Marca</th>
                       <th scope="col" style="min-width: 160px;">Número de expediente</th>
                       <th scope="col">Tipo de procedimiento</th>
                       <th scope="col">Fecha de presentación</th>
@@ -143,11 +165,16 @@
                   <tbody
                   *ngFor="let item of lstExpediente |  paginate : { itemsPerPage: 10, currentPage: paginaActual };  let row = index " >
                     <tr class="row-hover">
+                      <td>{{item.vcMarca}}</td>
                       <td>
-                          <button type="button" class="btn btn-outline-default waves-effect" style="color: #65bd42; font-weight: 500;" (click)="doBuscarExpedienteDetalle(item)">
-                            <i class="fas fa-search pr-2" aria-hidden="true"></i>
-                            <span style="text-decoration-line: underline;">{{item.vcIdExpediente}}-{{item.nuAnioExpediente}}</span>
-                          </button>
+                      <button type="button" class="btn btn-outline-default waves-effect" style="color: #65bd42; font-weight: 500;"
+                        (click)="doBuscarExpedienteDetalle(item)"
+                        tooltip="Detalle del Expediente"
+
+                        >
+                        <i class="fas fa-search pr-2" aria-hidden="true"></i>
+                        <span style="text-decoration-line: underline;">{{item.vcIdExpediente}}-{{item.nuAnioExpediente}}</span>
+                      </button>
                     </td>
                       <td>{{item.vcProcedimiento}}</td>
                       <td>{{item.vcFechaPresentacion}}</td>
@@ -161,22 +188,26 @@
                             <div style="text-align: center !important;">
                               <div class="navbar-header">
                                  <a class="navbar-brand">
-                                 <img  [src]="item.vcLogoHito" class="img-responsive" style="width: 60px; margin-left: 15px;" />
+                                 <img *ngIf="item.vcLogoHito!='' && item.vcLogoHito!=null"  [src]="item.vcLogoHito" class="img-responsive" style="width: 60px; margin-left: 15px;" />
+                                 <img *ngIf="item.vcLogoHito=='' || item.vcLogoHito==null"  src="./assets/status/status_no_definido.svg" class="img-responsive" style="width: 60px; margin-left: 15px;" />
                                  </a>
                                  <div style="font-size: 10px;">{{item.vcDescEstado}}</div>
                                  <div style="font-size: 10px;" *ngIf="item.vcSentidoResolucion!='vacio'">{{item.vcSentidoResolucion}}</div>
-                                 <div style="font-size: 10px;" *ngIf="item.vcLink!='vacio'"> <a [href]="item.vcLink" target="_blank"><span class="material-icons">
+                                 <div style="font-size: 10px;" *ngIf="item.vcLink!='vacio'"> <a [href]="item.vcLink" target="_blank"><span class="material-icons"
+                                  tooltip="Ingresar al enlace">
                                   link
                                   </span></a></div>
                                  <div style="font-size: 10px;" *ngIf="item.vcFechaPublicacion!='vacio'">{{item.vcFechaPublicacion}}</div>
-                                 <div style="font-size: 10px;" *ngIf="item.lstResolucion.length!=0"><span class="material-icons" (click)="doAbrirResolucion(item.lstResolucion)">
+                                 <div style="font-size: 10px;" *ngIf="item.lstResolucion.length!=0">
+                                  <!-- <span class="material-icons" (click)="doAbrirResolucion(item.lstResolucion)">
                                   description
-                                  </span></div>
+                                  </span> -->
+                                  <button (click)="doAbrirResolucion(item.lstResolucion)"  class="btn btn-primary btn-block" style="font-size: 10px"><span><i class="fa fa-file-text"></i></span> Resolución(es)</button>
+                                </div>
                                </div>
                             </div>
                             <div class="media-body align-self-center">
-                            <!-- <span placement="auto" class="toopltip" [popover]="popTemplate" triggers="mouseenter:mouseleave" popoverTitle="ESTADO"></span> -->
-                            <span placement="auto" class="toopltip" [popover]="popTemplate" triggers="mouseenter:mouseleave"  popoverTitle="ESTADO"></span>
+                            <span *ngIf="item.vcLogoHito!='' && item.vcLogoHito!=null" placement="auto" class="toopltip" [popover]="popTemplate"  popoverTitle="ESTADO"></span>
                             </div>
                           </div>
                         </div>
@@ -219,7 +250,7 @@
         <tbody *ngFor="let item of lstCertificados; let row = index" id="{{row}}">
           <tr class="row-hover">
             <td>
-              <span class="span_search_cert">
+              <span>
                 <button type="button" class="btn btn-outline-default waves-effect" style="color: #65bd42;  font-weight: 500;" (click)="doSeleccionado(item)">
                   <i class="fas fa-search pr-2" aria-hidden="true"></i>
                   <span style="text-decoration-line: underline;">{{item.vcNroCertificado}}</span>
@@ -250,7 +281,7 @@
   <div class="modal-body">
     <div>
       <tabset #staticTabs>
-        <tab heading="Seguimiento.">
+        <tab heading="Seguimientos del procedimiento">
           <div class="table-responsive">
             <table class="table">
               <thead>
@@ -274,7 +305,7 @@
 
           </div>
         </tab>
-        <tab heading="Datos solicitud y registro.">
+        <tab heading="Datos solicitud y registro">
           <div class="table-responsive">
             <table class="table table-hover" id="job-table">
               <thead>
@@ -307,9 +338,19 @@
                       <td></td>
                       <td class="font-weight-bold"></td>
                     </tr>
-                    <tr>
-                      <td class="font-weight-bold" style="text-align: left !important;">Publicado en Gaceta:</td>
+                    <tr *ngIf="objDetalleExpediente?.objDatoExpediente?.vcIdTipExpediente=='01'">
+                      <td class="font-weight-bold" style="text-align: left !important;">
+                        <div *ngIf="objDetalleExpediente?.objDatoExpediente?.vcFechaPublicacion!=null && objDetalleExpediente?.objDatoExpediente?.vcFechaPublicacion!=' '">Publicado en Gaceta:</div>
+
+                      </td>
                       <td>{{objDetalleExpediente?.objDatoExpediente?.vcFechaPublicacion}}</td>
+                      <td></td>
+                      <td class="font-weight-bold"></td>
+                    </tr>
+
+                    <tr *ngIf="objDetalleExpediente?.objDatoExpediente?.vcIdTipExpediente=='03'">
+                      <td class="font-weight-bold" style="text-align: left !important;">Tipo de acto</td>
+                      <td>{{objDetalleExpediente?.objDatoExpediente?.vcTipoActo}}</td>
                       <td></td>
                       <td class="font-weight-bold"></td>
                     </tr>
@@ -337,9 +378,22 @@
                     <tr>
                       <td class="font-weight-bold" style="text-align: left !important;">Nro. de Certificado:</td>
                       <td>{{objDetalleExpediente?.objDatoExpediente?.vcNroCertificado}}</td>
-                      <td class="font-weight-bold" style="text-align: left !important;">Fecha de publicación:</td>
-                      <td>{{objDetalleExpediente?.objDatoExpediente?.vcFechaPublicacion}}</td>
+
+                      <td class="font-weight-bold" style="text-align: left !important;"
+                      *ngIf="objDetalleExpediente?.objDatoExpediente?.vcIdTipExpediente=='01'" >
+                     <div *ngIf="objDetalleExpediente?.objDatoExpediente?.vcFechaPublicacion!=' ' && objDetalleExpediente?.objDatoExpediente?.vcFechaPublicacion!=null">Fecha de publicación:</div>
+                    </td>
+                      <td *ngIf="objDetalleExpediente?.objDatoExpediente?.vcIdTipExpediente=='01'"
+                      >
+                      <div>{{objDetalleExpediente?.objDatoExpediente?.vcFechaPublicacion}}</div>
+                    </td>
+
+                      <td class="font-weight-bold" style="text-align: left !important;"
+                      *ngIf="objDetalleExpediente?.objDatoExpediente?.vcIdTipExpediente!='01'" ></td>
+                      <td *ngIf="objDetalleExpediente?.objDatoExpediente?.vcIdTipExpediente!='01'"></td>
+
                     </tr>
+
                     <tr>
                       <td class="font-weight-bold" style="text-align: left !important;">Fecha de vencimiento:</td>
                       <td colspan="3">{{objDetalleExpediente?.objDatoExpediente?.vcFechaVencimiento}}</td>
@@ -347,10 +401,6 @@
                     <tr>
                       <td class="font-weight-bold" style="text-align: left !important;">Tipo de presentación:</td>
                       <td colspan="3">{{objDetalleExpediente?.objDatoExpediente?.vcTipoPresentacion}}</td>
-                    </tr>
-                    <tr>
-                      <td class="font-weight-bold" style="text-align: left !important;">Nro. de clase:</td>
-                      <td colspan="3">{{objDetalleExpediente?.objDatoExpediente?.vcClaseNiza}}</td>
                     </tr>
                     <tr>
                       <td class="font-weight-bold" style="text-align: left !important;">Nro. de clase:</td>
@@ -372,27 +422,44 @@
                 </tr>
                 <tr>
                   <th scope="col" >Tipo de persona</th>
-                  <th scope="col" >Titular / Representante Legal</th>
-                  <th scope="col"  >Tipo de documento</th>
-                  <th scope="col"  >RUC / DNI / LE</th>
-                  <!-- <th scope="col"  >Personas Juridicas/Naturales</th> -->
+                  <th scope="col" >Titular / Solicitante</th>
+                  <th scope="col"  >DOCUMENTO</th>
                   <th scope="col" >Domicilio procesal </th>
-                  <!-- <th scope="col"  style="color: beige; background-color: #65BD42; width: 100%;">País, Dep., Prov, Dis.</th> -->
                 </tr>
               </thead>
-              <tbody class="tableBody" *ngFor="let item of objDetalleExpediente?.lstTitulares  let row = index " >
+              <tbody class="tableBody" *ngFor="let item of lstPersonas  let row = index " >
                     <tr>
                       <td>{{item.vcTipoPersona}}</td>
                       <td>{{item.vcPersona}}</td>
-                      <td>{{item.vcTipoDocumento}}</td>
-                      <!-- <td>{{item.vcDocumento}}</td> -->
+                      <td>({{item.vcTipoDocumento}}) {{item.vcDocumento}}</td>
                       <td>{{item.vcDomicilioProcesal}}</td>
-                      <!-- <td>{{item.}}</td> -->
+
                     </tr>
+                    <tr *ngIf="item.lstRepresentes.length>0">
+                      <td><b>Representante: </b></td>
+                      <td colspan="3">
+                       <div class="table-responsive">
+                         <table class="table table-sm">
+                             <thead>
+                                 <tr>
+                                     <th scope="col" style="border-top: 0px;">N°</th>
+                                     <th scope="col" style="border-top: 0px;">(Número) Nombres/Razón social</th>
+                                 </tr>
+                             </thead>
+                             <tbody>
+                                 <tr *ngFor="let itemRep of item.lstRepresentes let row1 = index">
+                                     <th >{{row1 + 1}}</th>
+                                     <td><b>({{itemRep.vcDocumento}})</b> {{itemRep.vcPersona}}</td>
+                                 </tr>
+                             </tbody>
+                         </table>
+                     </div>
+                      </td>
+                     </tr>
               </tbody>
             </table>
 
-            <table class="table table-hover" id="job-table">
+            <table class="table table-hover" id="job-table" *ngIf="objDetalleExpediente?.objDatoExpediente?.vcFechaConclusion!=null || objDetalleExpediente?.objDatoExpediente?.vcFechaConclusion!=''">
               <thead>
                 <tr>
                   <th scope="col" colspan="4" style="color: beige; background-color: #65BD42; width: 100%;">Conclusión del expediente</th>

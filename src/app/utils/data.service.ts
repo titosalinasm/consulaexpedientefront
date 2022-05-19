@@ -31,6 +31,10 @@ export class DataService<T> {
         return this.httpClient.post<Blob>(this.endPoint + vc_imagen, { responseType: 'blob' as 'json' });
     }
 
+    public getImagen$(vc_imagen: any): Observable<Blob> {
+      return this.httpClient.get<Blob>(this.endPoint + vc_imagen, { responseType: 'blob' as 'json' });
+  }
+
     // Obtiene un objeto por filtros
     public getWithQuery$(params: any): Observable<any> {
         return this.httpClient.get<T>(this.endPoint, { params: params, headers: this.httpOptions.headers });

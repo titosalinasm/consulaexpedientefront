@@ -37,6 +37,15 @@ import { RECAPTCHA_V3_SITE_KEY, RecaptchaV3Module } from 'ng-recaptcha';
 import { environment } from '../environments/environment';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import {AutocompleteLibModule} from 'angular-ng-autocomplete';
+import { ImagenService } from './servicios/imagen.service';
+import {
+  ToastrModule,
+  ToastNoAnimation,
+  ToastNoAnimationModule
+} from 'ngx-toastr';
+import { LemaService } from './servicios/lema.service';
+import { NombrelogoService } from './servicios/nombrelogo.service';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 
 @NgModule({
@@ -71,8 +80,9 @@ import {AutocompleteLibModule} from 'angular-ng-autocomplete';
     ModalModule.forRoot(),
     RecaptchaV3Module,
     BsDropdownModule.forRoot(),
-    AutocompleteLibModule
-
+    AutocompleteLibModule,
+    ToastNoAnimationModule.forRoot(),
+    TooltipModule.forRoot(),
   ],
   providers: [
     ConfiguracionService,
@@ -81,6 +91,9 @@ import {AutocompleteLibModule} from 'angular-ng-autocomplete';
     BusExpedienteService,
     MessageService,
     DetalleexpedienteService,
+    ImagenService,
+    LemaService,
+    NombrelogoService,
     {
       provide: RECAPTCHA_V3_SITE_KEY,
       useValue: environment.recaptcha.siteKey,

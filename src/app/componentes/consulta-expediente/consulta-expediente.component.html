@@ -25,14 +25,18 @@
               <div class="row d-flex justify-content-center">
                 <div class="col-md-12">
                     <div class="card p-3  py-4"  style="border: 0px;">
-                      <label for="basic-url"><b>Ingrese N° de Expediente</b><app-tooltip popDescripcion="Lo brinda la DSD">
-                      </app-tooltip></label>
+                      <label for="basic-url"><b>Ingrese N° de Expediente</b>
+                      <!-- <app-tooltip popDescripcion="Lo brinda la DSD">
+                      </app-tooltip> -->
+                    </label>
                         <div class="row g-9 mt-2">
                             <div class="col-md-6 p-0">
-                                <input maxlength="7" id="input_auto_complete" type="text" class="input_style" placeholder="Número del expediente" formControlName="vcNroExpediente">
+                                <input maxlength="7" id="input_auto_complete" type="text" class="input_style" placeholder="Número del expediente" formControlName="vcNroExpediente"
+                                (keypress)="doValidacionInputDoc($event);" #myInput1>
                             </div>
                             <div class="col-md-3 p-0">
-                              <input type="text" (keyup)="searchOnKeyUp($event)" list="SearchResults" class="input_style" placeholder="Año del expediente" maxlength="4" formControlName="nuAnioExpediente" />
+                              <input type="text" (keyup)="searchOnKeyUp($event)" (keypress)="onlyPhoneNumber($event)" list="SearchResults" class="input_style" placeholder="Año(Opcional)" maxlength="4"
+                              formControlName="nuAnioExpediente" #myInput2/>
                               <datalist id="SearchResults" class="input_style"  style="content: '\f073';">
                                 <option *ngFor="let item of lstAnios" [value]="item.id">{{item.id}}</option>
                               </datalist>
@@ -79,7 +83,11 @@
                 <tr class="row-hover">
                   <td>{{item.vcMarca}}</td>
                   <td>
-                  <button type="button" class="btn btn-outline-default waves-effect" style="color: #65bd42; font-weight: 500;"  (click)="doBuscarExpedienteDetalle(item)">
+                  <button type="button" class="btn btn-outline-default waves-effect" style="color: #65bd42; font-weight: 500;"
+                    (click)="doBuscarExpedienteDetalle(item)"
+                    tooltip="Detalle del Expediente"
+
+                    >
                     <i class="fas fa-search pr-2" aria-hidden="true"></i>
                     <span style="text-decoration-line: underline;">{{item.vcIdExpediente}}-{{item.nuAnioExpediente}}</span>
                   </button>
@@ -96,21 +104,26 @@
                         <div style="text-align: center !important;">
                           <div class="navbar-header">
                              <a class="navbar-brand">
-                             <img  [src]="item.vcLogoHito" class="img-responsive" style="width: 60px; margin-left: 15px;" />
+                             <img *ngIf="item.vcLogoHito!='' && item.vcLogoHito!=null"  [src]="item.vcLogoHito" class="img-responsive" style="width: 60px; margin-left: 15px;" />
+                             <img *ngIf="item.vcLogoHito=='' || item.vcLogoHito==null"  src="./assets/status/status_no_definido.svg" class="img-responsive" style="width: 60px; margin-left: 15px;" />
                              </a>
                              <div style="font-size: 10px;">{{item.vcDescEstado}}</div>
                              <div style="font-size: 10px;" *ngIf="item.vcSentidoResolucion!='vacio'">{{item.vcSentidoResolucion}}</div>
-                             <div style="font-size: 10px;" *ngIf="item.vcLink!='vacio'"> <a [href]="item.vcLink" target="_blank"><span class="material-icons">
+                             <div style="font-size: 10px;" *ngIf="item.vcLink!='vacio'"> <a [href]="item.vcLink" target="_blank"><span class="material-icons"
+                              tooltip="Ingresar al enlace">
                               link
                               </span></a></div>
                              <div style="font-size: 10px;" *ngIf="item.vcFechaPublicacion!='vacio'">{{item.vcFechaPublicacion}}</div>
-                             <div style="font-size: 10px;" *ngIf="item.lstResolucion.length!=0"><span class="material-icons" (click)="doAbrirResolucion(item.lstResolucion)">
+                             <div style="font-size: 10px;" *ngIf="item.lstResolucion.length!=0">
+                              <!-- <span class="material-icons" (click)="doAbrirResolucion(item.lstResolucion)">
                               description
-                              </span></div>
+                              </span> -->
+                              <button (click)="doAbrirResolucion(item.lstResolucion)"  class="btn btn-primary btn-block" style="font-size: 10px"><span><i class="fa fa-file-text"></i></span> Resolución(es)</button>
+                            </div>
                            </div>
                         </div>
                         <div class="media-body align-self-center">
-                        <span placement="auto" class="toopltip" [popover]="popTemplate" triggers="mouseenter:mouseleave" popoverTitle="ESTADO"></span>
+                        <span *ngIf="item.vcLogoHito!='' && item.vcLogoHito!=null" placement="auto" class="toopltip" [popover]="popTemplate"  popoverTitle="ESTADO"></span>
                         </div>
                       </div>
                     </div>
@@ -141,7 +154,7 @@
   <div class="modal-body">
     <div>
       <tabset #staticTabs>
-        <tab heading="Seguimiento.">
+        <tab heading="Seguimientos del procedimiento">
           <div class="table-responsive">
             <table class="table">
               <thead>
@@ -165,7 +178,7 @@
 
           </div>
         </tab>
-        <tab heading="Datos solicitud y registro.">
+        <tab heading="Datos solicitud y registro">
           <div class="table-responsive">
             <table class="table table-hover" id="job-table">
               <thead>
@@ -198,9 +211,19 @@
                       <td></td>
                       <td class="font-weight-bold"></td>
                     </tr>
-                    <tr>
-                      <td class="font-weight-bold" style="text-align: left !important;">Publicado en Gaceta:</td>
+                    <tr *ngIf="objDetalleExpediente?.objDatoExpediente?.vcIdTipExpediente=='01'">
+                      <td class="font-weight-bold" style="text-align: left !important;">
+                        <div *ngIf="objDetalleExpediente?.objDatoExpediente?.vcFechaPublicacion!=null && objDetalleExpediente?.objDatoExpediente?.vcFechaPublicacion!=' '">Publicado en Gaceta:</div>
+
+                      </td>
                       <td>{{objDetalleExpediente?.objDatoExpediente?.vcFechaPublicacion}}</td>
+                      <td></td>
+                      <td class="font-weight-bold"></td>
+                    </tr>
+
+                    <tr *ngIf="objDetalleExpediente?.objDatoExpediente?.vcIdTipExpediente=='03'">
+                      <td class="font-weight-bold" style="text-align: left !important;">Tipo de acto</td>
+                      <td>{{objDetalleExpediente?.objDatoExpediente?.vcTipoActo}}</td>
                       <td></td>
                       <td class="font-weight-bold"></td>
                     </tr>
@@ -228,9 +251,22 @@
                     <tr>
                       <td class="font-weight-bold" style="text-align: left !important;">Nro. de Certificado:</td>
                       <td>{{objDetalleExpediente?.objDatoExpediente?.vcNroCertificado}}</td>
-                      <td class="font-weight-bold" style="text-align: left !important;">Fecha de publicación:</td>
-                      <td>{{objDetalleExpediente?.objDatoExpediente?.vcFechaPublicacion}}</td>
+
+                      <td class="font-weight-bold" style="text-align: left !important;"
+                      *ngIf="objDetalleExpediente?.objDatoExpediente?.vcIdTipExpediente=='01'" >
+                     <div *ngIf="objDetalleExpediente?.objDatoExpediente?.vcFechaPublicacion!=' ' && objDetalleExpediente?.objDatoExpediente?.vcFechaPublicacion!=null">Fecha de publicación:</div>
+                    </td>
+                      <td *ngIf="objDetalleExpediente?.objDatoExpediente?.vcIdTipExpediente=='01'"
+                      >
+                      <div>{{objDetalleExpediente?.objDatoExpediente?.vcFechaPublicacion}}</div>
+                    </td>
+
+                      <td class="font-weight-bold" style="text-align: left !important;"
+                      *ngIf="objDetalleExpediente?.objDatoExpediente?.vcIdTipExpediente!='01'" ></td>
+                      <td *ngIf="objDetalleExpediente?.objDatoExpediente?.vcIdTipExpediente!='01'"></td>
+
                     </tr>
+
                     <tr>
                       <td class="font-weight-bold" style="text-align: left !important;">Fecha de vencimiento:</td>
                       <td colspan="3">{{objDetalleExpediente?.objDatoExpediente?.vcFechaVencimiento}}</td>
@@ -238,10 +274,6 @@
                     <tr>
                       <td class="font-weight-bold" style="text-align: left !important;">Tipo de presentación:</td>
                       <td colspan="3">{{objDetalleExpediente?.objDatoExpediente?.vcTipoPresentacion}}</td>
-                    </tr>
-                    <tr>
-                      <td class="font-weight-bold" style="text-align: left !important;">Nro. de clase:</td>
-                      <td colspan="3">{{objDetalleExpediente?.objDatoExpediente?.vcClaseNiza}}</td>
                     </tr>
                     <tr>
                       <td class="font-weight-bold" style="text-align: left !important;">Nro. de clase:</td>
@@ -263,27 +295,46 @@
                 </tr>
                 <tr>
                   <th scope="col" >Tipo de persona</th>
-                  <th scope="col" >Titular / Representante Legal</th>
+                  <th scope="col" >Titular / Solicitante</th>
                   <th scope="col"  >Tipo de documento</th>
                   <th scope="col"  >RUC / DNI / LE</th>
-                  <!-- <th scope="col"  >Personas Juridicas/Naturales</th> -->
                   <th scope="col" >Domicilio procesal </th>
-                  <!-- <th scope="col"  style="color: beige; background-color: #65BD42; width: 100%;">País, Dep., Prov, Dis.</th> -->
                 </tr>
               </thead>
-              <tbody class="tableBody" *ngFor="let item of objDetalleExpediente?.lstTitulares  let row = index " >
+              <tbody class="tableBody" *ngFor="let item of lstPersonas  let row = index " >
                     <tr>
                       <td>{{item.vcTipoPersona}}</td>
                       <td>{{item.vcPersona}}</td>
                       <td>{{item.vcTipoDocumento}}</td>
-                      <!-- <td>{{item.vcDocumento}}</td> -->
+                      <td>{{item.vcDocumento}}</td>
                       <td>{{item.vcDomicilioProcesal}}</td>
-                      <!-- <td>{{item.}}</td> -->
+
                     </tr>
+                    <tr *ngIf="item.lstRepresentes.length>0">
+                      <td><b>Representante: </b></td>
+                      <td colspan="4">
+                       <div class="table-responsive">
+                         <table class="table table-sm">
+                             <thead>
+                                 <tr>
+                                     <th scope="col" style="border-top: 0px;">N°</th>
+                                     <th scope="col" style="border-top: 0px;">(Número) Nombres/Razón social</th>
+                                 </tr>
+                             </thead>
+                             <tbody>
+                                 <tr *ngFor="let itemRep of item.lstRepresentes let row1 = index">
+                                     <th >{{row1 + 1}}</th>
+                                     <td><b>({{itemRep.vcDocumento}})</b> {{itemRep.vcPersona}}</td>
+                                 </tr>
+                             </tbody>
+                         </table>
+                     </div>
+                      </td>
+                     </tr>
               </tbody>
             </table>
 
-            <table class="table table-hover" id="job-table">
+            <table class="table table-hover" id="job-table" *ngIf="objDetalleExpediente?.objDatoExpediente?.vcFechaConclusion!=null || objDetalleExpediente?.objDatoExpediente?.vcFechaConclusion!=''">
               <thead>
                 <tr>
                   <th scope="col" colspan="4" style="color: beige; background-color: #65BD42; width: 100%;">Conclusión del expediente</th>

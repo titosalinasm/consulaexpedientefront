@@ -8,6 +8,7 @@ import { ReCaptchaV3Service } from 'ng-recaptcha';
 import { NgForm } from '@angular/forms';
 import { RecaptchaErrorParameters } from "ng-recaptcha";
 import { TokenService } from 'src/app/servicios/token.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-consulta-expediente',
@@ -20,9 +21,22 @@ export class ConsultaExpedienteComponent implements OnInit, AfterViewInit{
 
   @ViewChild('_templateResolModal') _templateResolModal: TemplateRef<any>  ;
 
+  @ViewChild("myInput1") input1: ElementRef;
+  @ViewChild("myInput2") input2: ElementRef;
+
+  lstPersonas : any=[];
+
   ngAfterViewInit(){
 
   }
+
+
+  cambiarFocus(event : any){
+    var codigo = event.which || event.keyCode;
+    console.log(codigo);
+        this.input1.nativeElement.focus()
+  }
+
 
 
   lstExpediente : any[]=[];
@@ -38,7 +52,7 @@ export class ConsultaExpedienteComponent implements OnInit, AfterViewInit{
 
   filtersForm = this.formBuilder.group({
        vcNroExpediente: ['', [Validators.required]],
-       nuAnioExpediente :  [(new Date()).getFullYear()+'', [Validators.required]],
+       nuAnioExpediente :  ['', [Validators.required]],
   });
 
 
@@ -53,7 +67,8 @@ export class ConsultaExpedienteComponent implements OnInit, AfterViewInit{
               private _spinner: NgxSpinnerService,
               private modalService: BsModalService,
               private recaptchaV3Service: ReCaptchaV3Service,
-              private renderer: Renderer2
+              private renderer: Renderer2,
+              private toastr: ToastrService,
 
     ) {
 
@@ -120,20 +135,44 @@ export class ConsultaExpedienteComponent implements OnInit, AfterViewInit{
   }
 
   doBuscarExpediente(){
+    let d = new Date();
+    let nuAnioActualValid =d.getFullYear();
+
+    if(!!this.filtersForm.value.vcNroExpediente){
+      if(this.filtersForm.value.vcNroExpediente!=''){
+        if(this.filtersForm.value.vcNroExpediente.length>=6){
+
+
     this._spinner.show();
     let param={
-      vcNroExpediente: this.filtersForm.value.vcNroExpediente+'-'+this.filtersForm.value.nuAnioExpediente
+      vcNroExpediente: this.filtersForm.value.vcNroExpediente,
+      nuAnioExpediente: this.filtersForm.value.nuAnioExpediente
     }
     this.busExpedienteService.getWithPost$(param).subscribe(
       resp=>{
         this._spinner.hide();
         this.lstExpediente=resp.lstExpediente;
+        if(this.lstExpediente.length<1){
+          this.toastr.warning('No se encontraron resultados para tu busqueda, por favor cambia los parametros e intenta nuevamente.','Resultado');
+        }
 
       },
       error=>{
         this._spinner.hide();
       }
     );
+
+
+      }else{
+        this.toastr.warning('El número de expediente debe tener al menos 6 caracteres.','Validación');
+      }
+    }else{
+      this.toastr.warning('El número de expediente debe tener al menos 6 caracteres.','Validación');
+    }
+  }else{
+    this.toastr.warning('El número de expediente debe tener al menos 6 caracteres.','Validación');
+  }
+
   }
 
   doBuscarExpedienteDetalle(item :any){
@@ -148,6 +187,22 @@ export class ConsultaExpedienteComponent implements OnInit, AfterViewInit{
       resp=>{
         this._spinner.hide();
         this.objDetalleExpediente=resp;
+        let lstPersonaTmp1 : any[]=resp.lstTitulares;
+        let lstPersonaTmp2=resp.lstTitulares;
+
+
+        let lstTitulares=lstPersonaTmp1.filter(p => p.vcIdRepresentado==null);
+        let lstRepresentantes=lstPersonaTmp1.filter(p => p.vcIdRepresentado!=null);
+
+        let k=0
+        for(let i=0; i<lstTitulares.length; i++){
+          lstTitulares[k].lstRepresentes=lstRepresentantes.filter(p => p.vcIdRepresentado==lstTitulares[i].vcIdPersona);
+          k++;
+        }
+
+        this.lstPersonas=lstTitulares;
+
+        console.log(this.lstPersonas);
 
         let objClass = {          id: 0 ,
           class: 'modal-lg'
@@ -187,6 +242,35 @@ export class ConsultaExpedienteComponent implements OnInit, AfterViewInit{
       );
 
   }
+
+  doValidacionInputDoc(event: any) {
+    let flag = false;
+    var codigo = event.which || event.keyCode;
+    console.log(codigo)
+    if (codigo != 9 && codigo != 16 && codigo != 17 && codigo != 13 && codigo!=32) {
+        // let regx = /^[^<>*@#$&%+{}'°¬!/"()´.,;-_$]*$/;
+        let regx =/^[a-zA-Z0-9 ]+$/;
+        let result = regx.test(event.key);
+        if (result) {
+          flag = true;
+        }
+    }
+    return flag;
+  }
+
+
+ onlyPhoneNumber(event: any) {
+  let result = false;
+  var codigo = event.which || event.keyCode;
+
+      if (codigo != 43 && codigo != 35 && codigo != 42) {
+        let patt = /^([0-9])$/;
+        result = patt.test(event.key);
+      } else {
+        result = true;
+      }
+  return result;
+}
 
 
 }

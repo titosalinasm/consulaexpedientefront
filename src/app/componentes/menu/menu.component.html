@@ -2,24 +2,24 @@
   <div class="row pt-3 pb-3">
     <div class="col-sm-12">
       <div class="btn-group" dropdown>
-        <button id="button-menu-dividers" dropdownToggle type="button" class="btn btn-light dropdown-toggle"
+        <button id="button-menu-dividers" dropdownToggle type="button" class="btn btn-light dropdown-toggle" (click)="doManual()"
           aria-controls="dropdown-menu-dividers">
           <i class="material-icons" style="vertical-align: middle;">menu</i>
           <span class="caret"></span>
         </button>
         <ul id="dropdown-menu-dividers" *dropdownMenu class="dropdown-menu" role="menu"
         aria-labelledby="button-menu-dividers">
-        <li role="menuitem" class="_link" routerLink="/consulta-expediente"  >
-          <a class="dropdown-item" href="#"  >Número de Expediente</a>
+        <li role="menuitem" class="_link" routerLink="/consulta-expediente"   >
+          <span class="dropdown-item"   >Número de Expediente</span>
         </li>
-        <li role="menuitem" class="_link" routerLink="/consulta-certificado" >
-          <a class="dropdown-item" href="#" >Número de Certificado</a>
+        <li role="menuitem" class="_link" routerLink="/consulta-certificado">
+          <span class="dropdown-item"   >Número de Certificado</span>
         </li>
         <li role="menuitem" class="_link"  >
-          <a class="dropdown-item" href="#" target="_blank" >Video Tutorial</a>
+          <a class="dropdown-item" [href]="vcManual" target="_blank" >Manual de usuario</a>
         </li>
         <li role="menuitem" class="_link" routerLink="/inicio">
-          <a class="dropdown-item" href="#">Inicio</a>
+          <span class="dropdown-item"   >Inicio</span>
         </li>
 
       </ul>

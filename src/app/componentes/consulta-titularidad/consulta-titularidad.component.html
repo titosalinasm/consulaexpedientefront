@@ -1,0 +1,347 @@
+<br>
+<div class="container">
+  <div class="row justify-content-around">
+    <div class="ctn-steps step0  col-md-9">
+      <div class="container">
+        <div class="row" >
+          <div class="col-sm-12" >
+            <button style="width: 100px; float: right; margin-right: 18px;" class="btn btn-outline-primary" routerLink="/inicio"><span><i class="fa fa-reply" aria-hidden="true"></i></span> Volver</button>
+            </div>
+        </div>
+
+        <div class="card mb-3" style="border: 0px;" >
+          <div class="row">
+            <div class="col-sm-2" style="width: 90px !important;">
+              <img src="./assets/images/con_titularidad_icon.svg" class="card-img" style="width: 80px;">
+            </div>
+            <div class="col-sm-8" >
+                <div class="card-body" style="padding-left: 0px;">
+                <h5 class="card-title">Consulta por Titularidad</h5>
+                <p class="card-text">Realice la búsqueda por el titular de la marca.</p>
+              </div>
+
+            </div>
+            <div class="col-sm-2" >
+              </div>
+          </div>
+        </div>
+
+
+        <tabset #titularTabs>
+          <tab heading="Persona Natural" id="tab1" class="pt-3" (selectTab)="onSelect($event,1)">
+            <form [formGroup]="frmPnatural">
+              <div class="form-group">
+                <label for="exampleInputEmail1" class="font-weight-bold font-mb" data-toggle="tooltip">Nombres (*):
+                  <app-tooltip _tooltip="Coloque por lo menos un nombre, se recomienda escribirlo como en su DNI.">
+                  </app-tooltip>
+                </label>
+                <input type="text" class="input_style" placeholder="Ingrese nombres de la persona"
+                  [ngClass]="{'is-invalid': (frmPnatural.controls.nombres.invalid && (frmPnatural.controls.nombres.dirty || frmPnatural.controls.nombres.touched))}"
+                  formControlName="nombres" minlength="3" maxlength="250">
+                <div class="invalid-feedback font-mr"
+                  *ngIf="frmPnatural.controls.nombres.invalid && (frmPnatural.controls.nombres.dirty || frmPnatural.controls.nombres.touched)">
+                  Ingrese nombres de la persona.
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="exampleInputEmail1" class="font-weight-bold font-mb" data-toggle="tooltip">Apellidos (*):
+                  <app-tooltip
+                    _tooltip="Coloque por lo menos un apellido, para tener una búsqueda más precisa escriba los dos apellidos.">
+                  </app-tooltip>
+                </label>
+                <input type="text" class="input_style" placeholder="Ingrese apellidos de la persona"
+                  [ngClass]="{'is-invalid': (frmPnatural.controls.apellidos.invalid && (frmPnatural.controls.apellidos.dirty || frmPnatural.controls.apellidos.touched))}"
+                  formControlName="apellidos" minlength="2" maxlength="250">
+                <div class="invalid-feedback font-mr"
+                  *ngIf="frmPnatural.controls.apellidos.invalid && (frmPnatural.controls.apellidos.dirty || frmPnatural.controls.apellidos.touched)">
+                  Ingrese apellidos de la persona.
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="exampleInputEmail1" class="font-weight-bold font-mb" data-toggle="tooltip">Denominación / Marca:
+                  <app-tooltip _tooltip="Para hacer una búqueda más precisa ingrese alguna marca que tenga a su nombre.">
+                  </app-tooltip>
+                </label>
+                <input type="text" class="input_style" placeholder="Ingrese denominación o marca"
+                  [ngClass]="{'is-invalid': (frmPnatural.controls.denominacion.invalid && (frmPnatural.controls.denominacion.dirty || frmPnatural.controls.denominacion.touched))}"
+                  formControlName="denominacion" maxlength="250">
+                <div class="invalid-feedback font-mr"
+                  *ngIf="frmPnatural.controls.denominacion.invalid && (frmPnatural.controls.denominacion.dirty || frmPnatural.controls.denominacion.touched)">
+                  Ingrese denominación o marca.
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm text-left text-muted font-mm">
+                  (*) Los campos son obligatorios.
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm text-center">
+                  <br>
+                  <button type="submit" class="btn btn-success font-mb" [disabled]="frmPnatural.invalid"
+                    (click)="buscarTitulares()"><span style="margin-right: 5px;"><i
+                        class="fas fa-search"></i></span>Buscar</button>
+                  <button type="submit" class="btn btn-secondary font-mb ml-1" (click)="limpiarPersonaNatural()"><span
+                      style="margin-right: 5px;"><i class="fas fa-redo-alt"></i></span>Limpiar</button>
+                      <br>
+                </div>
+              </div>
+            </form>
+          </tab>
+
+          <tab heading="Persona Jurídica" id="tab2" class="pt-3" (selectTab)="onSelect($event,2)">
+            <form [formGroup]="frmPjuridica">
+              <div class="form-group">
+                <label for="exampleInputEmail1" class="font-weight-bold font-mm" data-toggle="tooltip">Razón Social (*):
+                  <app-tooltip
+                    _tooltip="Escriba la parte más representativa del nombre de la empresa, se sugiere no incluir las siglas para tener un resultado más preciso.">
+                  </app-tooltip>
+                </label>
+                <input type="text" class="input_style" placeholder="Ingrese razón social"
+                  [ngClass]="{'is-invalid': (frmPjuridica.controls.rsocial.invalid && (frmPjuridica.controls.rsocial.dirty || frmPjuridica.controls.rsocial.touched))}"
+                  formControlName="rsocial" maxlength="250">
+                <div class="invalid-feedback font-mr"
+                  *ngIf="frmPjuridica.controls.rsocial.invalid && (frmPjuridica.controls.rsocial.dirty || frmPjuridica.controls.rsocial.touched)">
+                  Ingrese razón social.
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="exampleInputEmail1" class="font-weight-bold font-mm" data-toggle="tooltip">Denominación / Marca:
+                  <app-tooltip _tooltip="Para hacer una búqueda más precisa ingrese alguna marca que tenga a su nombre.">
+                  </app-tooltip>
+                </label>
+                <input type="text" class="input_style" placeholder="Ingrese denominación o marca"
+                  [ngClass]="{'is-invalid': (frmPjuridica.controls.denominacion.invalid && (frmPjuridica.controls.denominacion.dirty || frmPjuridica.controls.denominacion.touched))}"
+                  formControlName="denominacion" maxlength="250">
+                <div class="invalid-feedback font-mr"
+                  *ngIf="frmPjuridica.controls.denominacion.invalid && (frmPjuridica.controls.denominacion.dirty || frmPjuridica.controls.denominacion.touched)">
+                  Ingrese razón social.
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm text-left text-muted font-mm">
+                  (*) Los campos son obligatorios.
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm text-center">
+                  <br>
+                  <button type="submit" class="btn btn-success font-mb" [disabled]="frmPjuridica.invalid"
+                    (click)="buscarTitulares()"><span style="margin-right: 5px;"><i
+                        class="fas fa-search"></i></span>Buscar</button>
+                  <button type="submit" class="btn btn-secondary font-mb ml-1" (click)="limpiarPersonaJuridica()"><span
+                      style="margin-right: 5px;"><i class="fas fa-redo-alt"></i></span>Limpiar</button>
+                      <br>
+                </div>
+              </div>
+            </form>
+          </tab>
+        </tabset>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+<br>
+
+<div class="container-fluid d-print-none">
+  <!-- Seccion de busqueda -->
+  <ng-container *ngIf="isShowTable">
+    <!-- Mensaje -->
+    <div class="row">
+      <div class="col-sm font-mr">
+        <div *ngIf="lstTitulares.length < 200; then thenBlock else elseBlock"></div>
+        <ng-template #thenBlock>Se encontraron {{lstTitulares.length}} resultados.</ng-template>
+        <ng-template #elseBlock>
+          <small class="text-muted">Se muestran los 200 registros con mayor aproximación a la denominación
+            ingresada.</small>
+        </ng-template>
+      </div>
+    </div>
+    <!-- Mensaje -->
+
+    <!-- Acciones -->
+    <div class="row text-right">
+      <div class="col-sm-12">
+        <div *ngIf="lstTitulares.length > 0; then thenBlock_a else elseBlock_a"></div>
+        <ng-template #thenBlock_a>
+
+            <button type="button" class="btn btn-light" style="margin-right: 3px;" (click)="imprimir()"
+              tooltip="Imprimir búsqueda">
+              <span style="font-size: 1em; color: green">
+                <i class="fas fa-print"></i>
+              </span>
+            </button>
+
+        </ng-template>
+        <ng-template #elseBlock_a>
+        </ng-template>
+      </div>
+    </div>
+    <!-- Acciones -->
+
+    <!-- Tabla de busqueda -->
+    <div class="row">
+      <div class="col-sm-12">
+        <div *ngIf="lstTitulares.length > 0; then thenBlock_b else elseBlock_b"></div>
+        <ng-template #thenBlock_b>
+          <!-- <div class="table-responsive-sm"> -->
+            <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr class="font-mb">
+                  <th scope="col">#</th>
+                  <th scope="col">Titular</th>
+                  <th scope="col">Pais</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody *ngFor="let item of lstTitulares; let row = index" id="{{row}}">
+                <tr  class="row-hover">
+                  <th>{{row + 1}}</th>
+                  <td style="text-align: left;">{{item.vcTitular}}</td>
+                  <td>{{item.vcIdPais}}</td>
+                  <td (click)="showOne(row)" style="cursor:pointer;">
+                    <div *ngIf="row==idShow; else showIconDown">
+                      <i class="fas fa-chevron-up"></i>
+                    </div>
+                    <ng-template #showIconDown>
+                      <i class="fas fa-chevron-down"></i>
+                    </ng-template>
+                  </td>
+                </tr>
+
+                <tr *ngIf="row==idShow">
+                  <td colspan="4" style="padding: 0px;">
+                    <div class="table-responsive">
+                      <table class="table table-bordered table-sm" style="font-size: 12px;">
+                        <thead>
+                          <tr class="font-mb">
+                            <th scope="col">
+                              <button type="button" class="btn btn-light"  tooltip="Exportar">
+                              <span style="font-size: 1em; color: green;">
+                                <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+                              </span>
+                              </button>
+                            </th>
+                            <th scope="col">Marca</th>
+                            <th scope="col">Número de expediente</th>
+                            <th scope="col">Tipo de Procedimiento</th>
+                            <th scope="col">Fecha de presentación</th>
+                            <th scope="col">Tipo de signo distintivos</th>
+                            <th scope="col">Clase</th>
+                            <th scope="col">Vigencia</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+
+                          <tr  class="row-hover">
+                            <th>1</th>
+                            <td class="text-center">
+                              <button type="button" class="btn btn-outline-default waves-effect" style="color: #65bd42; font-weight: 500;"
+                              tooltip="Detalle del Expediente"
+                              >
+                              <i class="fas fa-search pr-2" aria-hidden="true"></i>
+                              <span style="text-decoration-line: underline;">65866565-2022</span>
+                            </button>
+                            </td>
+                            <td>Mi Marca</td>
+                            <td>2022-02-02</td>
+                            <td>Registro</td>
+                            <td>2022-02-02</td>
+                            <td>Mixta</td>
+                            <td>45</td>
+                          </tr>
+                          <tr  class="row-hover">
+                            <th>1</th>
+                            <td class="text-center">
+                              <button type="button" class="btn btn-outline-default waves-effect" style="color: #65bd42; font-weight: 500;"
+                              tooltip="Detalle del Expediente"
+                              >
+                              <i class="fas fa-search pr-2" aria-hidden="true"></i>
+                              <span style="text-decoration-line: underline;">65866565-2022</span>
+                            </button>
+                            </td>
+                            <td>Mi Marca</td>
+                            <td>2022-02-02</td>
+                            <td>Registro</td>
+                            <td>2022-02-02</td>
+                            <td>Mixta</td>
+                            <td>45</td>
+                          </tr>
+                          <tr  class="row-hover">
+                            <th>1</th>
+                            <td class="text-center">
+                              <button type="button" class="btn btn-outline-default waves-effect" style="color: #65bd42; font-weight: 500;"
+                              tooltip="Detalle del Expediente"
+                              >
+                              <i class="fas fa-search pr-2" aria-hidden="true"></i>
+                              <span style="text-decoration-line: underline;">65866565-2022</span>
+                            </button>
+                            </td>
+                            <td>Mi Marca</td>
+                            <td>2022-02-02</td>
+                            <td>Registro</td>
+                            <td>2022-02-02</td>
+                            <td>Mixta</td>
+                            <td>45</td>
+                          </tr>
+                        </tbody>
+                        <!-- <tbody>
+                          <tr class="font-mm" *ngFor="let item2 of item.clsExpediente; let row2 = index">
+                            <td class="text-center">
+                              <div style="width: 200px;">
+                                <button type="button" class="btn btn-light"
+                                  (click)="detalleExpediente(item2, lgModalDetalleExpediente);">
+                                  <span style="font-size: 1em; color: green;">
+                                    <i class="material-icons"> search </i>
+                                    {{item2.pout_vc_nro_expediente}}
+                                  </span>
+                                </button>
+                              </div>
+                            </td>
+                            <td>{{item2.pout_vc_descripcion_signo}}</td>
+                            <td>{{item2.pout_vc_representacion_marca}}</td>
+                            <td>{{item2.pout_vc_tipo_procedimiento}}</td>
+                            <td>{{item2.pout_vc_fecha_presentacion}}</td>
+                            <td>{{item2.pout_vc_tipo_signo}}</td>
+                            <td>{{item2.pout_vc_clase}}</td>
+                            <td>{{item2.pout_vc_nro_resolucion}}</td>
+                            <td>{{item2.pout_vc_fecha_resolucion}}</td>
+                            <td>{{item2.pout_vc_conclusion}}</td>
+                            <td>{{item2.pout_vc_certificado}}</td>
+                            <td>{{item2.pout_vc_vigencia}}</td>
+                          </tr>
+                        </tbody> -->
+                      </table>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="row">
+            <div class="col-sm text-center">
+
+              <button type="submit" class="btn btn-outline-primary font-mb" style="margin-bottom: 15px;" (click)="doVerMas()">
+                <!-- <span><i
+                    class="fas fa-search"></i></span> -->
+                    Ver más</button>
+
+            </div>
+          </div>
+        </ng-template>
+        <ng-template #elseBlock_b>
+        </ng-template>
+      </div>
+    </div>
+    <!-- Tabla de busqueda -->
+
+  </ng-container>
+  <!-- Seccion de busqueda -->
+</div>
+
+
+

@@ -17,28 +17,31 @@
   <defs
      id="defs2" />
   <sodipodi:namedview
+     inkscape:guide-bbox="true"
+     showguides="true"
      inkscape:window-maximized="1"
      inkscape:window-y="-8"
      inkscape:window-x="-8"
      inkscape:window-height="1017"
      inkscape:window-width="1920"
-     fit-margin-bottom="0"
-     fit-margin-right="0"
-     fit-margin-left="0"
-     fit-margin-top="0"
      showgrid="false"
      inkscape:document-rotation="0"
      inkscape:current-layer="layer1"
      inkscape:document-units="mm"
-     inkscape:cy="316.77979"
-     inkscape:cx="859.30919"
+     inkscape:cy="835.01474"
+     inkscape:cx="895.0161"
      inkscape:zoom="0.35"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
      borderopacity="1.0"
      bordercolor="#666666"
      pagecolor="#ffffff"
-     id="base" />
+     id="base">
+    <sodipodi:guide
+       id="guide839"
+       orientation="1,0"
+       position="276.67858,-158.6517" />
+  </sodipodi:namedview>
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -47,59 +50,32 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <g
-     transform="translate(201.83928,-101.19931)"
+     transform="translate(171.88959,136.87659)"
      id="layer1"
      inkscape:groupmode="layer"
      inkscape:label="Capa 1">
     <rect
-       y="101.19931"
-       x="-201.83928"
+       y="-136.87659"
+       x="-171.88959"
        height="85.52092"
        width="560.91669"
-       id="rect24"
-       style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke-width:0.220214" />
-    <g
-       id="g910">
-      <rect
-         style="fill:#ffffff;fill-rule:evenodd;stroke-width:0.11957"
-         id="rect26"
-         width="9.8360815"
-         height="66.92598"
-         x="-136.39397"
-         y="109.17969" />
-      <g
-         id="g58"
-         transform="matrix(1.4718316,0,0,1.4718316,-130.14109,207.83358)">
-        <path
-           id="path52"
-           d="m -18.289719,-34.068295 h -10 v -5.01172 c -5.33776,-2.22651 -8.67485,-7.80107 -7.88457,-13.71942 0.85052,-6.36943 6.45305,-11.26616 12.87902,-11.26886 7.171,-0.003 13.00555,5.83019 13.00555,13 0,5.25 -3.18652,9.98047 -8,11.98828 z"
-           fill="#efd358"
-           style="fill:#ffffff" />
-        <rect
-           id="rect56"
-           height="2"
-           width="10"
-           fill="#b3b3b3"
-           y="-32.133011"
-           x="-28.289719"
-           style="fill:#ffffff" />
-      </g>
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:23.0345px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.575861"
-         x="-120.77407"
-         y="155.27821"
-         id="text79"><tspan
-           sodipodi:role="line"
-           id="tspan77"
-           x="-120.77407"
-           y="155.27821"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:23.0345px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ffffff;stroke-width:0.575861">SISTEMA DE INFORMACIÓN EN LÍNEA</tspan></text>
-    </g>
+       id="rect54"
+       style="fill:none;stroke-width:0.264583" />
+    <text
+       id="text30"
+       y="-83.138847"
+       x="-99.123779"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:38.2179px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.199051;"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:38.2179px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ffffff;fill-opacity:1;stroke-width:0.199051;"
+         y="-83.138847"
+         x="-99.123779"
+         id="tspan28"
+         sodipodi:role="line">CONSULTA TU MARCA</tspan></text>
   </g>
 </svg>

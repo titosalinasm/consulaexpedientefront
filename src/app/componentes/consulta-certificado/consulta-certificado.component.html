@@ -6,16 +6,25 @@
     <div class="ctn-steps step0  col-md-9">
       <div class="container">
 
+        <div class="row" >
+          <div class="col-sm-12" >
+            <button style="width: 100px; float: right; margin-right: 18px;" class="btn btn-outline-primary" routerLink="/inicio"><span><i class="fa fa-reply" aria-hidden="true"></i></span> Volver</button>
+            </div>
+        </div>
+
         <div class="card mb-3" style="border: 0px;" >
-          <div class="row no-gutters">
-            <div class="col-md-1">
+          <div class="row">
+            <div class="col-md-2" style="width: 90px !important;">
               <img src="./assets/images/con_certificado_icon.svg" class="card-img" style="width: 80px;">
             </div>
             <div class="col-md-8">
-              <div class="card-body">
+              <div class="card-body" style="padding-left: 0px;">
                 <h5 class="card-title">Consulta por Número de Certificado</h5>
                 <p class="card-text">Realice la búsqueda por número de certificado.</p>
               </div>
+            </div>
+            <div class="col-md-2">
+
             </div>
           </div>
         </div>
@@ -36,7 +45,7 @@
         <div class="input-group mb-3">
           <select class="input_style" formControlName="vcTipoSolicitud">
             <option value="-1">Seleccione tipo de certificado</option>
-            <option *ngFor="let item of lstTipoSolicitud" [value]="item.vcCodigoSolicitud">
+            <option *ngFor="let item of globalService?._objConfiguracion?.lstTipoSolicitud" [value]="item.vcCodigoSolicitud">
               {{item.vcDescSolicitud}}</option>
           </select>
         </div>
@@ -52,6 +61,7 @@
         </div>
         </form>
 
+
         <div class="row">
           <div class="col-sm text-center">
             <button type="submit" class="btn btn-success font-mb" (click)="doBuscarCertificado()"><span
@@ -61,6 +71,9 @@
           </div>
         </div>
         <br>
+        <alert type="info" [dismissible]="dismissible" (onClosed)="onClosed(dismissible)" *ngIf="objCertificados?.nuFlagPeriodoRen!=0 && objCertificados!=null">
+          <strong>¡Comunicado!</strong> El certificado <b>{{objCertificados?.vcNroCertificado}}</b> está a punto de vencer y se encuentra en periodo de renovación. Si usted es el titular o representante, ingrese a este enlace   <a href="https://servicio.indecopi.gob.pe/sel/" target="_blank">Servicios en Línea</a>
+        </alert>
         <div *ngIf="objCertificados!=null">
         <div class="row" style="margin-bottom: 15px;">
           <div class="col-sm-12">
@@ -69,6 +82,7 @@
             <div class="col-sm-9" style="font-size: 14px;">
               <img *ngIf="objLogoBase64!=null && objLogoBase64!=''" [src]="objLogoBase64" style="max-width: 150px; max-height: 150px;" />
               <br *ngIf="objLogoBase64!=null && objLogoBase64!=''">
+              <b>Nro. de Certificado: {{objCertificados?.vcNroCertificado}}</b><br>
               <b>Clase(s):</b> {{objCertificados?.vcClases}}<br>
               <b>Tipo de Solicitud:</b> {{objCertificados?.vcTipoSolicitud}}<br>
               <b>Tipo de Signo: </b> {{objCertificados?.vcTipoSigno}}<br>
@@ -79,19 +93,30 @@
              <div class="col-sm-3">
               <div class="row">
                 <div class="col-sm-12" style="text-align: center;">
-                  <img *ngIf="objCertificados?.vcEstado=='1'" src="./assets/status/status_1.svg"  width="80"/>
-                  <img *ngIf="objCertificados?.vcEstado=='2'" src="./assets/status/status_2.svg"  width="80"/>
-                  <img *ngIf="objCertificados?.vcEstado=='3'" src="./assets/status/status_3.svg"  width="80"/>
-                  <img *ngIf="objCertificados?.vcEstado=='4'" src="./assets/status/status_4.svg"  width="80"/>
-                  <img *ngIf="objCertificados?.vcEstado=='5'" src="./assets/status/status_5.svg"  width="80"/>
-                  <img *ngIf="objCertificados?.vcEstado=='6'" src="./assets/status/status_6.svg"  width="80"/>
 
-                  <span *ngIf="objCertificados?.vcEstado=='1'" placement="auto" class="toopltip_1" popover="Certificado Vigente" triggers="mouseenter:mouseleave"></span>
-                  <span *ngIf="objCertificados?.vcEstado=='2'" placement="auto" class="toopltip_1" popover="Certificado Cancelado" triggers="mouseenter:mouseleave"></span>
-                  <span *ngIf="objCertificados?.vcEstado=='3'" placement="auto" class="toopltip_1" popover="Certificado con clase Cancelada" triggers="mouseenter:mouseleave"></span>
-                  <span *ngIf="objCertificados?.vcEstado=='4'" placement="auto" class="toopltip_1" popover="Certificado renunciado" triggers="mouseenter:mouseleave"></span>
-                  <span *ngIf="objCertificados?.vcEstado=='5'" placement="auto" class="toopltip_1" popover="Certificado caducado" triggers="mouseenter:mouseleave"></span>
-                  <span *ngIf="objCertificados?.vcEstado=='6'" placement="auto" class="toopltip_1" popover="Certificado anulado" triggers="mouseenter:mouseleave"></span>
+                  <div class="media border p-3 flex-column flex-md-row" style="border: 0px solid #000 !important; padding: 0px !important;">
+                    <div style="text-align: center !important; width: 100%;">
+                      <div class="navbar-header">
+                         <a class="navbar-brand">
+                          <img *ngIf="objCertificados?.vcEstado=='1'" src="./assets/status/status_1.svg"  width="80"/>
+                          <img *ngIf="objCertificados?.vcEstado=='2'" src="./assets/status/status_2.svg"  width="80"/>
+                          <img *ngIf="objCertificados?.vcEstado=='3'" src="./assets/status/status_3.svg"  width="80"/>
+                          <img *ngIf="objCertificados?.vcEstado=='4'" src="./assets/status/status_4.svg"  width="80"/>
+                          <img *ngIf="objCertificados?.vcEstado=='5'" src="./assets/status/status_5.svg"  width="80"/>
+                          <img *ngIf="objCertificados?.vcEstado=='6'" src="./assets/status/status_6.svg"  width="80"/>
+                         </a>
+                       </div>
+                    </div>
+                    <div class="media-body align-self-center">
+                      <span *ngIf="objCertificados?.vcEstado=='1'" placement="auto" class="toopltip" popover="Certificado Vigente" [outsideClick]="true"></span>
+                      <span *ngIf="objCertificados?.vcEstado=='2'" placement="auto" class="toopltip" popover="Certificado Cancelado" [outsideClick]="true"></span>
+                      <span *ngIf="objCertificados?.vcEstado=='3'" placement="auto" class="toopltip" popover="Certificado con clase Cancelada" [outsideClick]="true"></span>
+                      <span *ngIf="objCertificados?.vcEstado=='4'" placement="auto" class="toopltip" popover="Certificado renunciado" [outsideClick]="true"></span>
+                      <span *ngIf="objCertificados?.vcEstado=='5'" placement="auto" class="toopltip" popover="Certificado caducado" [outsideClick]="true"></span>
+                      <span *ngIf="objCertificados?.vcEstado=='6'" placement="auto" class="toopltip" popover="Certificado anulado" [outsideClick]="true"></span>
+                    </div>
+                  </div>
+
                 </div>
               </div>
               <div class="row">
@@ -150,78 +175,84 @@
           <div class="col-sm-12">
             <p-panel header="Expedientes relacionados al certificado">
               <p-progressBar *ngIf="blLoadinExpReal" mode="indeterminate" [style]="{'height': '6px'}" [ngClass]="'customProgress'"></p-progressBar>
-              <div class="table-responsive"  *ngIf="!blLoadinExpReal">
-                <table class="table">
-                  <thead>
-                    <tr class="font-mb">
-                      <th scope="col">Marca</th>
-                      <th scope="col" style="min-width: 160px;">Número de expediente</th>
-                      <th scope="col">Tipo de procedimiento</th>
-                      <th scope="col">Fecha de presentación</th>
-                      <th scope="col">Clase</th>
-                      <th scope="col">Estado</th>
-                    </tr>
-                  </thead>
-                  <tbody
-                  *ngFor="let item of lstExpediente |  paginate : { itemsPerPage: 10, currentPage: paginaActual };  let row = index " >
-                    <tr class="row-hover">
-                      <td>{{item.vcMarca}}</td>
-                      <td>
-                      <button type="button" class="btn btn-outline-default waves-effect" style="color: #65bd42; font-weight: 500;"
-                        (click)="doBuscarExpedienteDetalle(item)"
-                        tooltip="Detalle del Expediente"
+          <div class="table-responsive" *ngIf="lstExpediente.length>0 && !blLoadinExpReal" style="font-size: 12px;" >
+            <table class="table">
+              <thead>
+                <tr class="font-mb">
+                  <th scope="col">Logo</th>
+                  <th scope="col">Marca</th>
+                  <th scope="col" style="min-width: 160px;">Número de expediente</th>
+                  <th scope="col">Tipo de procedimiento</th>
+                  <th scope="col">Fecha de presentación</th>
+                  <th scope="col">Clase</th>
+                  <th scope="col">Producto/Servicio</th>
+                  <th scope="col">Estado</th>
+                </tr>
+              </thead>
+              <tbody
+              *ngFor="let item of lstExpediente |  paginate : { itemsPerPage: 10, currentPage: paginaActual };  let row = index " >
+                <tr class="row-hover">
+                  <td>
+                    <img *ngIf="item?.vcFigura!=null" [src]="item.vcFigura" style="max-width: 80px; max-height: 80px;"/>
 
-                        >
-                        <i class="fas fa-search pr-2" aria-hidden="true"></i>
-                        <span style="text-decoration-line: underline;">{{item.vcIdExpediente}}-{{item.nuAnioExpediente}}</span>
-                      </button>
-                    </td>
-                      <td>{{item.vcProcedimiento}}</td>
-                      <td>{{item.vcFechaPresentacion}}</td>
-                      <td>{{item.vcClase}}</td>
-                      <td style="padding: 0px;">
-                        <div style="text-align: center;">
-                          <ng-template style="text-align: center;" #popTemplate>
-                            <img  [src]="item.vcLogoEstado"  width="250" />
-                          </ng-template>
-                          <div class="media border p-3 flex-column flex-md-row" style="border: 0px solid #000 !important; padding: 0px !important;">
-                            <div style="text-align: center !important;">
-                              <div class="navbar-header">
-                                 <a class="navbar-brand">
-                                 <img *ngIf="item.vcLogoHito!='' && item.vcLogoHito!=null"  [src]="item.vcLogoHito" class="img-responsive" style="width: 60px; margin-left: 15px;" />
-                                 <img *ngIf="item.vcLogoHito=='' || item.vcLogoHito==null"  src="./assets/status/status_no_definido.svg" class="img-responsive" style="width: 60px; margin-left: 15px;" />
-                                 </a>
-                                 <div style="font-size: 10px;">{{item.vcDescEstado}}</div>
-                                 <div style="font-size: 10px;" *ngIf="item.vcSentidoResolucion!='vacio'">{{item.vcSentidoResolucion}}</div>
-                                 <div style="font-size: 10px;" *ngIf="item.vcLink!='vacio'"> <a [href]="item.vcLink" target="_blank"><span class="material-icons"
-                                  tooltip="Ingresar al enlace">
-                                  link
-                                  </span></a></div>
-                                 <div style="font-size: 10px;" *ngIf="item.vcFechaPublicacion!='vacio'">{{item.vcFechaPublicacion}}</div>
-                                 <div style="font-size: 10px;" *ngIf="item.lstResolucion.length!=0">
-                                  <!-- <span class="material-icons" (click)="doAbrirResolucion(item.lstResolucion)">
-                                  description
-                                  </span> -->
-                                  <button (click)="doAbrirResolucion(item.lstResolucion)"  class="btn btn-primary btn-block" style="font-size: 10px"><span><i class="fa fa-file-text"></i></span> Resolución(es)</button>
-                                </div>
-                               </div>
+                  </td>
+                  <td>{{item.vcMarca}}</td>
+                  <td>
+                  <button type="button" class="btn btn-outline-default waves-effect" style="color: #65bd42; font-weight: 500;"
+                    (click)="doBuscarExpedienteDetalle(item)"
+                    tooltip="Detalle del Expediente"
+
+                    >
+                    <i class="fas fa-search pr-2" aria-hidden="true"></i>
+                    <span style="text-decoration-line: underline;">{{item.vcIdExpediente}}-{{item.nuAnioExpediente}}</span>
+                  </button>
+                </td>
+                  <td>{{item.vcProcedimiento}}</td>
+                  <td>{{item.vcFechaPresentacion}}</td>
+                  <td>{{item.vcClase}}</td>
+                  <td *ngIf="(item.vcProdServ!=null?item.vcProdServ:'').length<101">{{item.vcProdServ}}</td>
+                  <td *ngIf="(item.vcProdServ!=null?item.vcProdServ:'').length>100">{{(item.vcProdServ).substring(0, 99)}} ... <span style="color:#0d6efd" (click)="doCargarProdServ(item)"><a >Ver más</a></span></td>
+                  <td style="padding: 0px;">
+                    <div style="text-align: center;">
+                      <ng-template style="text-align: center;" #popTemplate>
+                        <img  [src]="item.vcLogoEstado"  width="250" />
+                      </ng-template>
+                      <div class="media border p-3 flex-column flex-md-row" style="border: 0px solid #000 !important; padding: 0px !important;">
+                        <div style="text-align: center !important;">
+                          <div class="navbar-header">
+                             <a class="navbar-brand">
+                             <img *ngIf="item.vcLogoHito!='' && item.vcLogoHito!=null"  [src]="item.vcLogoHito" class="img-responsive" style="width: 60px; margin-left: 15px;" />
+                             <img *ngIf="item.vcLogoHito=='' || item.vcLogoHito==null"  src="./assets/status/status_no_definido.svg" class="img-responsive" style="width: 60px; margin-left: 15px;" />
+                             </a>
+                             <div style="font-size: 10px;">{{item.vcDescEstado}}</div>
+                             <div style="font-size: 10px;" *ngIf="item.vcSentidoResolucion!='vacio'">{{item.vcSentidoResolucion}}</div>
+                             <div style="font-size: 10px;" *ngIf="item.vcLink!='vacio' && item.vcLink!='' && item.vcLink!=null"> <a [href]="item.vcLink" target="_blank"><span class="material-icons"
+                              tooltip="Ingresar al enlace">
+                              link
+                              </span></a></div>
+                             <div style="font-size: 10px;" *ngIf="item.vcFechaPublicacion!='vacio' && item.vcFechaPublicacion!='' && item.vcFechaPublicacion!=null">{{item.vcFechaPublicacion}}</div>
+                             <div style="font-size: 10px;" *ngIf="item.lstResolucion.length!=0">
+
+                              <button (click)="doAbrirResolucion(item.lstResolucion)"  class="btn btn-primary btn-block" style="font-size: 10px"><span><i class="fa fa-file-text"></i></span> Resolución(es)</button>
                             </div>
-                            <div class="media-body align-self-center">
-                            <span *ngIf="item.vcLogoHito!='' && item.vcLogoHito!=null" placement="auto" class="toopltip" [popover]="popTemplate"  popoverTitle="ESTADO"></span>
-                            </div>
-                          </div>
+                           </div>
                         </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-                <pagination-controls
-                [responsive]="true"
-                previousLabel="Atras"
-                nextLabel="Siguiente"
-                (pageChange)="paginaActual = $event">
-              </pagination-controls>
-              </div>
+                        <div class="media-body align-self-center">
+                        <span *ngIf="item.vcLogoHito!='' && item.vcLogoHito!=null" placement="auto" class="toopltip" [popover]="popTemplate"  popoverTitle="ESTADO DEL EXPEDIENTE"  [outsideClick]="true"></span>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <pagination-controls
+            [responsive]="true"
+            previousLabel="Atras"
+            nextLabel="Siguiente"
+            (pageChange)="paginaActual = $event">
+          </pagination-controls>
+          </div>
           </p-panel>
           </div>
         </div>
@@ -287,7 +318,7 @@
               <thead>
                 <tr class="font-mb">
                   <th>#</th>
-                  <th>Fecha</th>
+                  <th style="width: 120px;">Fecha</th>
                   <th>Seguimiento</th>
                 </tr>
               </thead>
@@ -296,8 +327,7 @@
                   <th>{{row + 1}}</th>
                   <td>{{item.vcFechaSeguimiento}}</td>
                   <td>{{item.vcSeguimiento}}
-                    <app-tooltip *ngIf="item.vcInformativo!=null" [popDescripcion]="item.vcInformativo">
-                    </app-tooltip>
+                    <span *ngIf="item.vcInformativo!=null" class="toopltip" [popover]="item.vcInformativo"  triggers="mouseenter:mouseleave"></span>
                    </td>
                 </tr>
               </tbody>
@@ -305,7 +335,7 @@
 
           </div>
         </tab>
-        <tab heading="Datos solicitud y registro">
+        <tab heading="Datos solicitud y registro" *ngIf="objDetalleExpediente?.objDatoExpediente?.vcIdTipoExpediente!=null && objDetalleExpediente?.objDatoExpediente?.vcIdTipoExpediente!=''">
           <div class="table-responsive">
             <table class="table table-hover" id="job-table">
               <thead>
@@ -423,7 +453,8 @@
                 <tr>
                   <th scope="col" >Tipo de persona</th>
                   <th scope="col" >Titular / Solicitante</th>
-                  <th scope="col"  >DOCUMENTO</th>
+                  <th scope="col"  >Tipo de documento</th>
+                  <th scope="col"  >RUC / DNI / LE</th>
                   <th scope="col" >Domicilio procesal </th>
                 </tr>
               </thead>
@@ -431,13 +462,14 @@
                     <tr>
                       <td>{{item.vcTipoPersona}}</td>
                       <td>{{item.vcPersona}}</td>
-                      <td>({{item.vcTipoDocumento}}) {{item.vcDocumento}}</td>
+                      <td>{{item.vcTipoDocumento}}</td>
+                      <td>{{item.vcDocumento}}</td>
                       <td>{{item.vcDomicilioProcesal}}</td>
 
                     </tr>
                     <tr *ngIf="item.lstRepresentes.length>0">
                       <td><b>Representante: </b></td>
-                      <td colspan="3">
+                      <td colspan="4">
                        <div class="table-responsive">
                          <table class="table table-sm">
                              <thead>
@@ -449,7 +481,7 @@
                              <tbody>
                                  <tr *ngFor="let itemRep of item.lstRepresentes let row1 = index">
                                      <th >{{row1 + 1}}</th>
-                                     <td><b>({{itemRep.vcDocumento}})</b> {{itemRep.vcPersona}}</td>
+                                     <td><b>({{itemRep.vcDocumento}})</b>  {{itemRep.vcPersona}}</td>
                                  </tr>
                              </tbody>
                          </table>
@@ -522,5 +554,17 @@
         </tbody>
       </table>
     </div>
+  </div>
+</ng-template>
+
+<ng-template #_templateProdServicio>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Producto y/o Servicio</h4>
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div style="max-height: 400px; overflow: auto;">{{objProdServicio}}</div>
   </div>
 </ng-template>

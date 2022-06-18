@@ -46,6 +46,10 @@ import {
 import { LemaService } from './servicios/lema.service';
 import { NombrelogoService } from './servicios/nombrelogo.service';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { ProdservService } from './servicios/prodserv.service';
+import { AlertModule } from 'ngx-bootstrap/alert';
+import { ConsultaTitularidadComponent } from './componentes/consulta-titularidad/consulta-titularidad.component';
+import { BusTitularesService } from './servicios/bus-titulares.service';
 
 
 @NgModule({
@@ -57,7 +61,8 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
     BannerPrincipalComponent,
     TooltipComponent,
     ConsultaCertificadoComponent,
-    ConsultaExpedienteComponent
+    ConsultaExpedienteComponent,
+    ConsultaTitularidadComponent
 
   ],
   imports: [
@@ -83,6 +88,7 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
     AutocompleteLibModule,
     ToastNoAnimationModule.forRoot(),
     TooltipModule.forRoot(),
+    AlertModule.forRoot(),
   ],
   providers: [
     ConfiguracionService,
@@ -94,6 +100,8 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
     ImagenService,
     LemaService,
     NombrelogoService,
+    ProdservService,
+    BusTitularesService,
     {
       provide: RECAPTCHA_V3_SITE_KEY,
       useValue: environment.recaptcha.siteKey,

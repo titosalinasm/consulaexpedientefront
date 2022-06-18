@@ -8,3 +8,13 @@
     text-align: center;
   }
 }
+
+.tamanio_texto{
+
+}
+
+@media only screen and (min-width: 768px) {
+  .tamanio_texto{
+    font-size: 12px;
+  }
+}

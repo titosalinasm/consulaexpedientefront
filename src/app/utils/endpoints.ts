@@ -8,13 +8,15 @@ export const END_POINTS = {
       busqueda_expediente: "/busqueda/expediente",
       busqueda_detalle_expediente: "/busqueda/detalleexpediente",
       lema: "/busqueda/lema",
-      nombrelogo: "/busqueda/nombrelogo"
+      nombrelogo: "/busqueda/nombrelogo",
+      prod_serv: "/busqueda/prodserv",
+      titulares: "/busqueda/titulares"
 
     },
     token:{
       oauth:'/oauth/token'
     },
     imagen :{
-      ruta: '/busqueda/FileSystem/img/'
+      ruta: '/busqueda/logo'
     }
 };

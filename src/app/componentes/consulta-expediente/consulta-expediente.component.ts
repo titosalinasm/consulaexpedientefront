@@ -9,6 +9,8 @@ import { NgForm } from '@angular/forms';
 import { RecaptchaErrorParameters } from "ng-recaptcha";
 import { TokenService } from 'src/app/servicios/token.service';
 import { ToastrService } from 'ngx-toastr';
+import { ProdservService } from 'src/app/servicios/prodserv.service';
+import { ImagenService } from 'src/app/servicios/imagen.service';
 
 @Component({
   selector: 'app-consulta-expediente',
@@ -20,6 +22,10 @@ export class ConsultaExpedienteComponent implements OnInit, AfterViewInit{
   @ViewChild('_templateModal') _templateModal: TemplateRef<any>  ;
 
   @ViewChild('_templateResolModal') _templateResolModal: TemplateRef<any>  ;
+
+  @ViewChild('_templateProdServicio') _templateProdServicio: TemplateRef<any>  ;
+
+
 
   @ViewChild("myInput1") input1: ElementRef;
   @ViewChild("myInput2") input2: ElementRef;
@@ -59,9 +65,10 @@ export class ConsultaExpedienteComponent implements OnInit, AfterViewInit{
   keyword = 'name';
   lstAnios : any[] = [];
 
+  objProdServicio : any;
+
 
   constructor(private formBuilder: FormBuilder,
-              private tokenService : TokenService,
               private busExpedienteService:  BusExpedienteService,
               private detalleexpedienteService: DetalleexpedienteService,
               private _spinner: NgxSpinnerService,
@@ -69,10 +76,12 @@ export class ConsultaExpedienteComponent implements OnInit, AfterViewInit{
               private recaptchaV3Service: ReCaptchaV3Service,
               private renderer: Renderer2,
               private toastr: ToastrService,
+              private prodservService : ProdservService,
+              private imagenService : ImagenService
 
     ) {
 
-      this.obtenerToken();
+      // this.obtenerToken();
       this.cargarAnioExpediente();
     }
 
@@ -86,7 +95,6 @@ export class ConsultaExpedienteComponent implements OnInit, AfterViewInit{
 
 
   ngOnInit() {
-
 
   }
 
@@ -156,6 +164,10 @@ export class ConsultaExpedienteComponent implements OnInit, AfterViewInit{
           this.toastr.warning('No se encontraron resultados para tu busqueda, por favor cambia los parametros e intenta nuevamente.','Resultado');
         }
 
+        for(let i=0; i<this.lstExpediente.length; i++){
+          this.obtenerImagenes(this.lstExpediente[i], i);
+        }
+
       },
       error=>{
         this._spinner.hide();
@@ -216,6 +228,30 @@ export class ConsultaExpedienteComponent implements OnInit, AfterViewInit{
     );
   }
 
+  doCargarProdServ(item : any){
+    let param={
+      vcIdExpediente: item.vcIdExpediente,
+      nuAnioExpediente: item.nuAnioExpediente,
+      vcIdAreaExpediente: item.vcIdAreaExpediente
+    }
+    this._spinner.show();
+    this.prodservService.getWithPost$(param).subscribe(
+      resp=>{
+          this.objProdServicio=resp.vcProductoServicio;
+          this._spinner.hide();
+          let objClass = {
+            id: 1 ,
+            class: 'modal-lg'
+          };
+        this.openModal(this._templateProdServicio, objClass);
+      },
+      error=>{
+        this._spinner.hide();
+      }
+    );
+
+  }
+
   doAbrirResolucion(item : any){
     this.lstResolucion=item;
     let objClass = {
@@ -225,23 +261,30 @@ export class ConsultaExpedienteComponent implements OnInit, AfterViewInit{
   this.openModal(this._templateResolModal, objClass);
   }
 
-  obtenerToken() {
 
-    this._spinner.show();
-      this.tokenService.obtenerToken$().subscribe(
+  obtenerImagenes(item : any, index: number) {
+    if (item.logo!='null') {
+      let param={
+        vcNombreLogo: item.vcLogo
+      }
+      this.imagenService.getWithPost$(param).subscribe(
         resp => {
-          this._spinner.hide();
-          if (resp.access_token) {
-            //console.log(resp.access_token);
-            sessionStorage.setItem("access_token", resp.access_token);
-          }
-        },
-        error => {
-          this._spinner.hide();
-        },
-      );
 
-  }
+          if(resp.nuFlagResult==0){
+            // this.objLogoBase64='data:image/gif;base64,'+resp.recurso;
+            this.lstExpediente[index].vcFigura='data:image/gif;base64,'+resp.recurso;
+          }else{
+            this.lstExpediente[index].vcFigura=null;
+          }
+
+
+
+      }, error => {
+
+      });
+    }
+
+}
 
   doValidacionInputDoc(event: any) {
     let flag = false;
@@ -271,7 +314,6 @@ export class ConsultaExpedienteComponent implements OnInit, AfterViewInit{
       }
   return result;
 }
-
 
 }
 

@@ -1,4 +1,3 @@
-
 <div class="container">
   <div class="row justify-content-around">
     <div class="ctn-steps step0  col-md-9">
@@ -22,22 +21,37 @@
       </div>
       <div class="container mt-2">
         <div class="row">
-          <div class="col-sm-12 text-center">
+          <div class="col-sm-6" style="text-align: center;">  <div class="sector">
+            <a class="lnkSector text-center" (click)="doNavigate(1)">
+              <img src="./assets/images/con_expediente.svg" width="80">
+              <p class="mt-1 text-center">Número de expediente</p>
+            </a>
+            <span placement="auto" class="toopltip" popover="Búsqueda por número de expediente" [outsideClick]="true"
+            >
+          </span>
+          </div>
+        </div>
+          <div class="col-sm-6"  style="text-align: center;">
             <div class="sector">
-              <a class="lnkSector text-center" (click)="doNavigate(1)">
-                <img src="./assets/images/con_expediente.svg" width="80">
-                <p class="mt-1 text-center">Número de expediente</p>
-              </a>
-              <span placement="auto" class="toopltip" popover="Texto lo brinda la DSD" triggers="mouseenter:mouseleave"
-              >
-            </span>
-            </div>
+            <a class="lnkSector text-center" (click)="doNavigate(2)">
+              <img src="./assets/images/con_certificado.svg" width="80">
+              <p class="mt-1 text-center">Número de certificado</p>
+            </a>
+            <span placement="auto" class="toopltip" popover="Búsqueda por número de certificado" [outsideClick]="true"
+            >
+          </span>
+           </div>
+        </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-sm-6" style="text-align: center;">
             <div class="sector">
-              <a class="lnkSector text-center" (click)="doNavigate(2)">
-                <img src="./assets/images/con_certificado.svg" width="80">
-                <p class="mt-1 text-center">Número de certificado</p>
+              <a class="lnkSector text-center" (click)="doNavigate(3)">
+                <img src="./assets/images/con_titularidad.svg" width="80">
+                <p class="mt-1 text-center">Consulta por titularidad</p>
               </a>
-              <span placement="auto" class="toopltip" popover="Texto lo brinda la DSD" triggers="mouseenter:mouseleave"
+              <span placement="auto" class="toopltip" popover="Búsqueda por titularidad" [outsideClick]="true"
               >
             </span>
             </div>
@@ -56,14 +70,18 @@
 
         <div class="row">
           <div class="col-sm-6 mt-3 mb-1" style="text-align: center;">
-           <a href="https://enlinea.indecopi.gob.pe/buscatumarca/" target="_blank"> <img src="./assets/images/logo_bus_marcas.svg" width="300"></a>
-             <p class="mt-1 text-center">Para realizar búsquedas por el nombre de una marca  <app-tooltip popDescripcion="Lo brinda la DSD">
-            </app-tooltip></p>
+           <a href="https://enlinea.indecopi.gob.pe/buscatumarca/" target="_blank"> <img src="./assets/images/logo_bus_marcas.svg" class="imgen_bus_ga"></a>
+             <p class="mt-1 text-center">Para realizar búsquedas por el nombre de una marca
+               <!-- <app-tooltip popDescripcion="Busca tu marca" [outsideClick]="true">
+            </app-tooltip> -->
+          </p>
           </div>
           <div class="col-sm-6 mt-3 mb-1" style="text-align: center;">
-            <a href="https://servicio.indecopi.gob.pe/gaceta/" target="_blank"> <img src="./assets/images/logo_gaceta.svg" width="300"></a>
-                <p class="mt-1 text-center">Para visualizar marcas publicadas y poder descargar el listado por día <app-tooltip popDescripcion="Lo brinda la DSD">
-                </app-tooltip></p>
+            <a href="https://servicio.indecopi.gob.pe/gaceta/" target="_blank"> <img src="./assets/images/logo_gaceta.svg"  class="imgen_bus_ga"></a>
+                <p class="mt-1 text-center">Para visualizar marcas publicadas y poder descargar el listado por día
+                  <!-- <app-tooltip popDescripcion="Gaceta electrónica" [outsideClick]="true">
+                </app-tooltip> -->
+              </p>
            </div>
         </div>
 

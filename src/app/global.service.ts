@@ -10,6 +10,7 @@ export class GlobalService {
 
     _vcCorreo: string='';
     _objConfiguracion : any;
+    _expire : number;
 
 
   get objConfiguracion(): any {
@@ -28,6 +29,13 @@ export class GlobalService {
         this._vcCorreo = _vcCorreo;
     }
 
+    get expire(): number {
+      return this._expire;
+  }
+
+  set expire(_expire: number) {
+      this._expire = _expire;
+  }
 
 
 }

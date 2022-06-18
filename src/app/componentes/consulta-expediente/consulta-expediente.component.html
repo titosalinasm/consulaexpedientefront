@@ -3,17 +3,26 @@
   <div class="row justify-content-around">
     <div class="ctn-steps step0  col-md-9">
       <div class="container">
+        <div class="row" >
+          <div class="col-sm-12" >
+            <button style="width: 100px; float: right; margin-right: 18px;" class="btn btn-outline-primary" routerLink="/inicio"><span><i class="fa fa-reply" aria-hidden="true"></i></span> Volver</button>
+            </div>
+        </div>
+
         <div class="card mb-3" style="border: 0px;" >
-          <div class="row no-gutters">
-            <div class="col-md-1">
+          <div class="row">
+            <div class="col-sm-2" style="width: 90px !important;">
               <img src="./assets/images/con_expediente_icon.svg" class="card-img" style="width: 80px;">
             </div>
-            <div class="col-md-8">
-              <div class="card-body">
+            <div class="col-sm-8" >
+                <div class="card-body" style="padding-left: 0px;">
                 <h5 class="card-title">Consulta por Número de Expediente</h5>
                 <p class="card-text">Realice la búsqueda por número de Expediente.</p>
               </div>
+
             </div>
+            <div class="col-sm-2" >
+              </div>
           </div>
         </div>
 
@@ -21,7 +30,6 @@
         <form  [formGroup]="filtersForm" >
           <div class="row" >
             <div class="col-sm-12" >
-
               <div class="row d-flex justify-content-center">
                 <div class="col-md-12">
                     <div class="card p-3  py-4"  style="border: 0px;">
@@ -66,21 +74,27 @@
            </div>
           </form>
 
-          <div class="table-responsive" *ngIf="lstExpediente.length>0">
+          <div class="table-responsive" *ngIf="lstExpediente.length>0" style="font-size: 12px;">
             <table class="table">
               <thead>
                 <tr class="font-mb">
+                  <th scope="col">Logo</th>
                   <th scope="col">Marca</th>
                   <th scope="col" style="min-width: 160px;">Número de expediente</th>
                   <th scope="col">Tipo de procedimiento</th>
                   <th scope="col">Fecha de presentación</th>
                   <th scope="col">Clase</th>
+                  <th scope="col">Producto/Servicio</th>
                   <th scope="col">Estado</th>
                 </tr>
               </thead>
               <tbody
               *ngFor="let item of lstExpediente |  paginate : { itemsPerPage: 10, currentPage: paginaActual };  let row = index " >
                 <tr class="row-hover">
+                  <td>
+                    <img *ngIf="item?.vcFigura!=null" [src]="item.vcFigura" style="max-width: 80px; max-height: 80px;"/>
+
+                  </td>
                   <td>{{item.vcMarca}}</td>
                   <td>
                   <button type="button" class="btn btn-outline-default waves-effect" style="color: #65bd42; font-weight: 500;"
@@ -95,6 +109,8 @@
                   <td>{{item.vcProcedimiento}}</td>
                   <td>{{item.vcFechaPresentacion}}</td>
                   <td>{{item.vcClase}}</td>
+                  <td *ngIf="(item.vcProdServ!=null?item.vcProdServ:'').length<101">{{item.vcProdServ}}</td>
+                  <td *ngIf="(item.vcProdServ!=null?item.vcProdServ:'').length>100">{{(item.vcProdServ).substring(0, 99)}} ... <span style="color:#0d6efd" (click)="doCargarProdServ(item)"><a >Ver más</a></span></td>
                   <td style="padding: 0px;">
                     <div style="text-align: center;">
                       <ng-template style="text-align: center;" #popTemplate>
@@ -109,21 +125,19 @@
                              </a>
                              <div style="font-size: 10px;">{{item.vcDescEstado}}</div>
                              <div style="font-size: 10px;" *ngIf="item.vcSentidoResolucion!='vacio'">{{item.vcSentidoResolucion}}</div>
-                             <div style="font-size: 10px;" *ngIf="item.vcLink!='vacio'"> <a [href]="item.vcLink" target="_blank"><span class="material-icons"
+                             <div style="font-size: 10px;" *ngIf="item.vcLink!='vacio' && item.vcLink!='' && item.vcLink!=null"> <a [href]="item.vcLink" target="_blank"><span class="material-icons"
                               tooltip="Ingresar al enlace">
                               link
                               </span></a></div>
-                             <div style="font-size: 10px;" *ngIf="item.vcFechaPublicacion!='vacio'">{{item.vcFechaPublicacion}}</div>
+                             <div style="font-size: 10px;" *ngIf="item.vcFechaPublicacion!='vacio' && item.vcFechaPublicacion!='' && item.vcFechaPublicacion!=null">{{item.vcFechaPublicacion}}</div>
                              <div style="font-size: 10px;" *ngIf="item.lstResolucion.length!=0">
-                              <!-- <span class="material-icons" (click)="doAbrirResolucion(item.lstResolucion)">
-                              description
-                              </span> -->
+
                               <button (click)="doAbrirResolucion(item.lstResolucion)"  class="btn btn-primary btn-block" style="font-size: 10px"><span><i class="fa fa-file-text"></i></span> Resolución(es)</button>
                             </div>
                            </div>
                         </div>
                         <div class="media-body align-self-center">
-                        <span *ngIf="item.vcLogoHito!='' && item.vcLogoHito!=null" placement="auto" class="toopltip" [popover]="popTemplate"  popoverTitle="ESTADO"></span>
+                        <span *ngIf="item.vcLogoHito!='' && item.vcLogoHito!=null" placement="auto" class="toopltip" [popover]="popTemplate"  popoverTitle="ESTADO DEL EXPEDIENTE"  [outsideClick]="true"></span>
                         </div>
                       </div>
                     </div>
@@ -160,7 +174,7 @@
               <thead>
                 <tr class="font-mb">
                   <th>#</th>
-                  <th>Fecha</th>
+                  <th style="width: 120px;">Fecha</th>
                   <th>Seguimiento</th>
                 </tr>
               </thead>
@@ -169,8 +183,8 @@
                   <th>{{row + 1}}</th>
                   <td>{{item.vcFechaSeguimiento}}</td>
                   <td>{{item.vcSeguimiento}}
-                    <app-tooltip *ngIf="item.vcInformativo!=null" [popDescripcion]="item.vcInformativo">
-                    </app-tooltip>
+                    <span *ngIf="item.vcInformativo!=null" class="toopltip" [popover]="item.vcInformativo"  triggers="mouseenter:mouseleave">
+                    </span>
                    </td>
                 </tr>
               </tbody>
@@ -178,7 +192,7 @@
 
           </div>
         </tab>
-        <tab heading="Datos solicitud y registro">
+        <tab heading="Datos solicitud y registro" *ngIf="objDetalleExpediente?.objDatoExpediente?.vcIdTipoExpediente!=null && objDetalleExpediente?.objDatoExpediente?.vcIdTipoExpediente!=''">
           <div class="table-responsive">
             <table class="table table-hover" id="job-table">
               <thead>
@@ -324,7 +338,7 @@
                              <tbody>
                                  <tr *ngFor="let itemRep of item.lstRepresentes let row1 = index">
                                      <th >{{row1 + 1}}</th>
-                                     <td><b>({{itemRep.vcDocumento}})</b> {{itemRep.vcPersona}}</td>
+                                     <td><b>({{itemRep.vcDocumento}})</b>  {{itemRep.vcPersona}}</td>
                                  </tr>
                              </tbody>
                          </table>
@@ -397,6 +411,18 @@
         </tbody>
       </table>
     </div>
+  </div>
+</ng-template>
+
+<ng-template #_templateProdServicio>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Producto y/o Servicio</h4>
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div style="max-height: 400px; overflow: auto;">{{objProdServicio}}</div>
   </div>
 </ng-template>
 

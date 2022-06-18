@@ -66,24 +66,24 @@ p {
   margin-right: 15px;
 }
 
-.toopltip {
+/* .toopltip {
   display: inline-block;
   width: 29px;
   height: 27px;
-  background: url(/assets/images/info_icon.png) no-repeat;
+  background: url('./assets/images/info_icon.png') no-repeat;
   vertical-align: top;
   cursor: pointer;
-}
+} */
 
 
-.toopltip._none {
+/* .toopltip._none {
   display: inline-block;
   width: 29px;
   height: 27px;
   background: transparent;
   vertical-align: top;
   cursor: pointer;
-}
+} */
 
 @media (max-width: 575px) {
   ._txtley{
@@ -125,3 +125,10 @@ text-align: center;
 .text_center h1 {
 color: #c3014d;
 }
+
+
+.imgen_bus_ga{
+  width: 80%;
+}
+
+

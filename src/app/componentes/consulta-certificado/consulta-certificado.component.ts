@@ -16,6 +16,8 @@ import { LemaService } from 'src/app/servicios/lema.service';
 
 import { ToastrService } from 'ngx-toastr';
 import { NombrelogoService } from 'src/app/servicios/nombrelogo.service';
+import { ProdservService } from 'src/app/servicios/prodserv.service';
+
 
 @Component({
   selector: 'app-consulta-certificado',
@@ -28,11 +30,13 @@ export class ConsultaCertificadoComponent implements OnInit {
   modalRef: BsModalRef;
   @ViewChild('_templateResolModal') _templateResolModal: TemplateRef<any> ;
 
+  @ViewChild('_templateProdServicio') _templateProdServicio: TemplateRef<any>  ;
+
   //controls
   displayMaximizable: boolean=false;
   paginaActual : any=1;
 
-  lstTipoSolicitud : any[]=[];
+  // lstTipoSolicitud : any[]=[];
   lstCertificados : any[]=[];
   objCertificados : any;
 
@@ -54,10 +58,12 @@ export class ConsultaCertificadoComponent implements OnInit {
 
   lstPersonas : any[]=[];
 
+  objProdServicio : any;
+
+  dismissible :boolean = true;
+
   constructor(
-    private globalService: GlobalService,
-    private tokenService : TokenService,
-    private configuracionService: ConfiguracionService,
+    public globalService: GlobalService,
     private busCertificadoService : BusCertificadoService,
     private busExpRelacionadoService: BusExpRelacionadoService,
     private _spinner: NgxSpinnerService,
@@ -68,9 +74,9 @@ export class ConsultaCertificadoComponent implements OnInit {
     private imagenService : ImagenService,
     private toastr: ToastrService,
     private lemaService : LemaService,
-    private nombrelogoService : NombrelogoService
+    private nombrelogoService : NombrelogoService,
+    private prodservService : ProdservService,
     ) {
-      this.obtenerToken();
 
     }
 
@@ -89,9 +95,9 @@ export class ConsultaCertificadoComponent implements OnInit {
   doSeleccionado(item: any){
 
     //muestra mensaje si esta en periodo de renovación
-    if(item.nuFlagPeriodoRen!=0){
-    this.messageService.add({severity:'info', summary: 'Información', detail: 'Este Certificado esta en perido de renovación. Si usted es el titular o representante, ingresa a este enlace.'});
-    }
+    // if(item.nuFlagPeriodoRen!=0){
+    // this.messageService.add({severity:'info', summary: 'Información', detail: 'Este Certificado esta en perido de renovación. Si usted es el titular o representante, ingresa a este enlace.'});
+    // }
 
     this.displayMaximizable = false;
     let arrTitulares=(item.vcTitulares).split('; ');
@@ -158,13 +164,20 @@ export class ConsultaCertificadoComponent implements OnInit {
     this.lstCertificados=[];
     this.lstExpediente=[];
     this.objLogoBase64=null;
+
+    this.filtersForm.controls.vcNroCertificado.setValue('');
+    this.filtersForm.controls.vcTipoSolicitud.setValue('-1');
+
   }
 
   doBuscarCertificado(){
 
 
-
-    this.doLimpiar();
+    this.blLoadinExpReal=true;
+    this.objCertificados=null;
+    this.lstCertificados=[];
+    this.lstExpediente=[];
+    this.objLogoBase64=null;
 
     let param={
       vcNroCertificado : this.filtersForm.value.vcNroCertificado,
@@ -219,45 +232,16 @@ export class ConsultaCertificadoComponent implements OnInit {
         this.blLoadinExpReal=false;
         this.lstExpediente=resp.lstExpediente;
 
+        for(let i=0; i<this.lstExpediente.length; i++){
+          this.obtenerFigura(this.lstExpediente[i], i);
+        }
+
       },
       error=>{
         this.blLoadinExpReal=true;
         // this._spinner.hide();
       }
     );
-  }
-
-  obtenerConfiguracion(){
-    this._spinner.show();
-    this.configuracionService.getAll$().subscribe(
-      resp=>{
-        this._spinner.hide();
-        // this.globalService._objConfiguracion=resp;
-        this.lstTipoSolicitud=resp.lstTipoSolicitud;
-      },
-      error=>{
-        this._spinner.hide();
-      }
-    );
-  }
-
-  obtenerToken() {
-
-    this._spinner.show();
-      this.tokenService.obtenerToken$().subscribe(
-        resp => {
-          // this._spinner.hide();
-          if (resp.access_token) {
-            //console.log(resp.access_token);
-            sessionStorage.setItem("access_token", resp.access_token);
-            this.obtenerConfiguracion();
-          }
-        },
-        error => {
-          this._spinner.hide();
-        },
-      );
-
   }
 
 
@@ -313,20 +297,48 @@ export class ConsultaCertificadoComponent implements OnInit {
 
   obtenerImagenes(vcLogo : any) {
       if (vcLogo!='null') {
-        this.imagenService.getImagen$(vcLogo).subscribe(
+        let param={
+          vcNombreLogo: vcLogo
+        }
+        this.imagenService.getWithPost$(param).subscribe(
           resp => {
-          let reader = new FileReader();
-          reader.addEventListener("load", () => {
-            this.objLogoBase64=reader.result;
-          }, false);
-          if (resp) {
-            reader.readAsDataURL(resp);
-          }
+
+            if(resp.nuFlagResult==0){
+              this.objLogoBase64='data:image/gif;base64,'+resp.recurso;
+            }else{
+              this.objLogoBase64=null;
+            }
+
+
+
         }, error => {
 
         });
       }
 
+  }
+
+  obtenerFigura(item : any, index: number) {
+    if (item.logo!='null') {
+      let param={
+        vcNombreLogo: item.vcLogo
+      }
+      this.imagenService.getWithPost$(param).subscribe(
+        resp => {
+
+          if(resp.nuFlagResult==0){
+            // this.objLogoBase64='data:image/gif;base64,'+resp.recurso;
+            this.lstExpediente[index].vcFigura='data:image/gif;base64,'+resp.recurso;
+          }else{
+            this.lstExpediente[index].vcFigura=null;
+          }
+
+
+
+      }, error => {
+
+      });
+    }
   }
 
 doValidacionInputDoc(event: any) {
@@ -344,6 +356,30 @@ doValidacionInputDoc(event: any) {
   return flag;
 }
 
+doCargarProdServ(item : any){
+  let param={
+    vcIdExpediente: item.vcIdExpediente,
+    nuAnioExpediente: item.nuAnioExpediente,
+    vcIdAreaExpediente: item.vcIdAreaExpediente
+  }
+  this._spinner.show();
+  this.prodservService.getWithPost$(param).subscribe(
+    resp=>{
+        this.objProdServicio=resp.vcProductoServicio;
+        this._spinner.hide();
+        let objClass = {
+          id: 1 ,
+          class: 'modal-lg'
+        };
+      this.openModal(this._templateProdServicio, objClass);
+    },
+    error=>{
+      this._spinner.hide();
+    }
+  );
+
+}
+
   openModal(template: TemplateRef<any>, objClass: any) {
     this.modalRef = this.modalService.show(template, objClass);
   }
@@ -358,6 +394,10 @@ onReject() {
 
 clear() {
     this.messageService.clear();
+}
+
+onClosed(dismissedAlert: any): void {
+  dismissedAlert=!dismissedAlert;
 }
 
 }

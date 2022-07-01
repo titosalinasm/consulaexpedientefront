@@ -39,8 +39,12 @@
               "./node_modules/primeng/resources/primeng.min.css",
               "node_modules/ngx-toastr/toastr.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "allowedCommonJsDependencies": [
+              "rxjs-compat"
+           ]
           },
+
           "configurations": {
             "prd": {
               "fileReplacements": [
@@ -144,6 +148,7 @@
               "src/styles.css"
             ],
             "scripts": []
+
           }
         },
         "lint": {

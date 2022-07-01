@@ -12,6 +12,8 @@ export class GlobalService {
     _objConfiguracion : any;
     _expire : number;
 
+    _lstTitularesBackup:any[]=[];
+
 
   get objConfiguracion(): any {
       return this._objConfiguracion;
@@ -36,6 +38,14 @@ export class GlobalService {
   set expire(_expire: number) {
       this._expire = _expire;
   }
+
+  get lstTitularesBackup(): any {
+    return this._lstTitularesBackup;
+}
+
+set lstTitularesBackup(obj: any) {
+    this._lstTitularesBackup = obj;
+}
 
 
 }

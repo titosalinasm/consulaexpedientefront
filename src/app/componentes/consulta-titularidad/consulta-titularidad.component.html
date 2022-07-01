@@ -167,13 +167,18 @@
       <div class="col-sm-12">
         <div *ngIf="lstTitulares.length > 0; then thenBlock_a else elseBlock_a"></div>
         <ng-template #thenBlock_a>
-
-            <button type="button" class="btn btn-light" style="margin-right: 3px;" (click)="imprimir()"
+            <button type="button" class="btn btn-light" style="margin-right: 3px;" (click)="doCargarFiltros()"
+            tooltip="Filtrar">
+            <span style="font-size: 1em; color: green">
+              <i class="fa fa-filter" aria-hidden="true"></i>
+            </span>
+             </button>
+            <!-- <button type="button" class="btn btn-light" style="margin-right: 3px;" (click)="imprimir()"
               tooltip="Imprimir búsqueda">
               <span style="font-size: 1em; color: green">
                 <i class="fas fa-print"></i>
               </span>
-            </button>
+            </button> -->
 
         </ng-template>
         <ng-template #elseBlock_a>
@@ -187,6 +192,24 @@
       <div class="col-sm-12">
         <div *ngIf="lstTitulares.length > 0; then thenBlock_b else elseBlock_b"></div>
         <ng-template #thenBlock_b>
+          <div class="row">
+            <div class="col-sm-12" style="margin-top: 10px; margin-bottom: 10px; margin-right: 15px;">
+            <span  *ngFor="let item of lstFiltroProcedimiento; let row = index" id="{{row}}" >
+              <button class="btn btn-lg btn-success" style="font-size: 9px; width: auto; background: #4e4e4e; height: 30px; border-color: #9b9b9b; padding: 5px;" *ngIf="item.blSelected">
+              <span class="pull-left">{{item.vcTipoProcedimiento}} ({{item.nuCantidad}}) </span>
+              <i class="fa fa-times-circle pull-right" aria-hidden="true" style="margin-top: 2px; font-size: 13px;" (click)="doQuitaFiltroProcedimiento(row)"></i>
+              </button>
+           </span>
+
+           <span *ngFor="let item of lstFiltroClases; let row = index" id="{{row}}">
+            <button class="btn btn-lg btn-success" style="font-size: 9px; width: auto; background: #4e4e4e; height: 30px; border-color: #9b9b9b; padding: 5px;"  *ngIf="item.blSelected">
+            <span class="pull-left">{{item.nuClase}} ({{item.nuCantidad}}) </span>
+            <i class="fa fa-times-circle pull-right" aria-hidden="true" style="margin-top: 2px; font-size: 13px;"  (click)="doQuitaFiltroClase(row)"></i>
+            </button>
+         </span>
+        </div>
+          </div>
+
           <!-- <div class="table-responsive-sm"> -->
             <div class="table-responsive">
             <table class="table table-hover">
@@ -196,6 +219,7 @@
                   <th scope="col">Titular</th>
                   <th scope="col">Pais</th>
                   <th scope="col"></th>
+                  <th scope="col"></th>
                 </tr>
               </thead>
               <tbody *ngFor="let item of lstTitulares; let row = index" id="{{row}}">
@@ -204,23 +228,27 @@
                   <td style="text-align: left;">{{item.vcTitular}}</td>
                   <td>{{item.vcIdPais}}</td>
                   <td (click)="showOne(row)" style="cursor:pointer;">
-                    <div *ngIf="row==idShow; else showIconDown">
-                      <i class="fas fa-chevron-up"></i>
-                    </div>
-                    <ng-template #showIconDown>
-                      <i class="fas fa-chevron-down"></i>
-                    </ng-template>
+                      <div *ngIf="lstSelectTitulares[row].blView" >
+                        <i class="fas fa-chevron-up"></i>
+                      </div>
+                      <div (click)="doExpedienteXTitular(item.vcTitular, row)" *ngIf="!lstSelectTitulares[row].blView">
+                        <i class="fas fa-chevron-down"></i>
+                      </div>
                   </td>
+                  <td  style="cursor:pointer;color: #198754"><i class="fa fa-pie-chart" aria-hidden="true" (click)="getEstadistica(item)"></i></td>
                 </tr>
 
-                <tr *ngIf="row==idShow">
+                <tr *ngIf="lstSelectTitulares[row].blView">
                   <td colspan="4" style="padding: 0px;">
-                    <div class="table-responsive">
+                    <div *ngIf="_spinner_simple && lstSelectTitulares[row].blView && !item.lstExpedienteTitular " class="spinner-border text-success " style="margin-top: 10px;" role="status">
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                    <div class="table-responsive" *ngIf="item?.lstExpedienteTitular?.length>0">
                       <table class="table table-bordered table-sm" style="font-size: 12px;">
                         <thead>
                           <tr class="font-mb">
                             <th scope="col">
-                              <button type="button" class="btn btn-light"  tooltip="Exportar">
+                              <button type="button" class="btn btn-light"  tooltip="Exportar" (click)="getDescargaExcel(item)">
                               <span style="font-size: 1em; color: green;">
                                 <i class="fa fa-file-excel-o" aria-hidden="true"></i>
                               </span>
@@ -235,87 +263,36 @@
                             <th scope="col">Vigencia</th>
                           </tr>
                         </thead>
-                        <tbody>
+                        <tbody *ngFor="let item2 of item.lstExpedienteTitular  | paginate: { itemsPerPage: 10, currentPage: p[row], id: item.nuFila}; let row2 = index" >
 
                           <tr  class="row-hover">
-                            <th>1</th>
+                            <th>{{row2+1}}</th>
+                            <td style="text-align: left; max-width:200px;">{{item2.vcDenominacion}}</td>
                             <td class="text-center">
                               <button type="button" class="btn btn-outline-default waves-effect" style="color: #65bd42; font-weight: 500;"
                               tooltip="Detalle del Expediente"
                               >
                               <i class="fas fa-search pr-2" aria-hidden="true"></i>
-                              <span style="text-decoration-line: underline;">65866565-2022</span>
+                              <span style="text-decoration-line: underline;">{{item2.vcNroExpediente}}-{{item2.nuAnioExpediente}}</span>
                             </button>
                             </td>
-                            <td>Mi Marca</td>
-                            <td>2022-02-02</td>
-                            <td>Registro</td>
-                            <td>2022-02-02</td>
-                            <td>Mixta</td>
-                            <td>45</td>
-                          </tr>
-                          <tr  class="row-hover">
-                            <th>1</th>
-                            <td class="text-center">
-                              <button type="button" class="btn btn-outline-default waves-effect" style="color: #65bd42; font-weight: 500;"
-                              tooltip="Detalle del Expediente"
-                              >
-                              <i class="fas fa-search pr-2" aria-hidden="true"></i>
-                              <span style="text-decoration-line: underline;">65866565-2022</span>
-                            </button>
-                            </td>
-                            <td>Mi Marca</td>
-                            <td>2022-02-02</td>
-                            <td>Registro</td>
-                            <td>2022-02-02</td>
-                            <td>Mixta</td>
-                            <td>45</td>
-                          </tr>
-                          <tr  class="row-hover">
-                            <th>1</th>
-                            <td class="text-center">
-                              <button type="button" class="btn btn-outline-default waves-effect" style="color: #65bd42; font-weight: 500;"
-                              tooltip="Detalle del Expediente"
-                              >
-                              <i class="fas fa-search pr-2" aria-hidden="true"></i>
-                              <span style="text-decoration-line: underline;">65866565-2022</span>
-                            </button>
-                            </td>
-                            <td>Mi Marca</td>
-                            <td>2022-02-02</td>
-                            <td>Registro</td>
-                            <td>2022-02-02</td>
-                            <td>Mixta</td>
-                            <td>45</td>
+                            <td style="text-align: left;">{{item2.vcTipoProcedimiento}}</td>
+                            <td>{{item2.vcFechaPresentacion}}</td>
+                            <td>{{item2.vcTipoSolicitud}}</td>
+                            <td>{{item2.nuClase}}</td>
+                            <td>{{item2.vcFechaExpiracion}}</td>
                           </tr>
                         </tbody>
-                        <!-- <tbody>
-                          <tr class="font-mm" *ngFor="let item2 of item.clsExpediente; let row2 = index">
-                            <td class="text-center">
-                              <div style="width: 200px;">
-                                <button type="button" class="btn btn-light"
-                                  (click)="detalleExpediente(item2, lgModalDetalleExpediente);">
-                                  <span style="font-size: 1em; color: green;">
-                                    <i class="material-icons"> search </i>
-                                    {{item2.pout_vc_nro_expediente}}
-                                  </span>
-                                </button>
-                              </div>
-                            </td>
-                            <td>{{item2.pout_vc_descripcion_signo}}</td>
-                            <td>{{item2.pout_vc_representacion_marca}}</td>
-                            <td>{{item2.pout_vc_tipo_procedimiento}}</td>
-                            <td>{{item2.pout_vc_fecha_presentacion}}</td>
-                            <td>{{item2.pout_vc_tipo_signo}}</td>
-                            <td>{{item2.pout_vc_clase}}</td>
-                            <td>{{item2.pout_vc_nro_resolucion}}</td>
-                            <td>{{item2.pout_vc_fecha_resolucion}}</td>
-                            <td>{{item2.pout_vc_conclusion}}</td>
-                            <td>{{item2.pout_vc_certificado}}</td>
-                            <td>{{item2.pout_vc_vigencia}}</td>
-                          </tr>
-                        </tbody> -->
                       </table>
+                      <pagination-controls
+                      [responsive]="true"
+                      previousLabel="Atras"
+                      nextLabel="Siguiente"
+                      (pageChange)="p[row] = $event"
+                      [id]="item.nuFila"
+                      style="font-size: 12px;"
+                      >
+                    </pagination-controls>
                     </div>
                   </td>
                 </tr>
@@ -324,12 +301,8 @@
           </div>
           <div class="row">
             <div class="col-sm text-center">
-
-              <button type="submit" class="btn btn-outline-primary font-mb" style="margin-bottom: 15px;" (click)="doVerMas()">
-                <!-- <span><i
-                    class="fas fa-search"></i></span> -->
+              <button type="submit" class="btn btn-outline-primary font-mb" style="margin-bottom: 15px;" (click)="doVerMas()" *ngIf="this.lstSelectTitulares.length<=this.nuLimitSup">
                     Ver más</button>
-
             </div>
           </div>
         </ng-template>
@@ -344,4 +317,68 @@
 </div>
 
 
+<ng-template #_modalFiltro>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Filtrar los datos cargados</h4>
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-sm-12">
+        <b>Por tipo de procedimieno</b>
+      </div>
+    </div>
 
+    <div class="row" *ngFor="let item of lstFiltroProcedimiento; let row = index">
+      <div class="col-sm-12">
+       <span> <input type="checkbox" [checked]="item.blSelected" (change)="doSeleccionarFiltroTipoProcedimiento(row)" /> </span> {{item.vcTipoProcedimiento}} ({{item.nuCantidad}} <span *ngIf="item.nuCantidad==1">Registro</span> <span *ngIf="item.nuCantidad!=1">Registros</span>)
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-sm-12">
+        <b>Por clases</b>
+      </div>
+    </div>
+
+    <div class="row" *ngFor="let item of lstFiltroClases; let row = index">
+      <div class="col-sm-12">
+        <span> <input type="checkbox" [checked]="item.blSelected" (change)="doSeleccionarFiltroClases(row)"/> </span> {{item.nuClase}} ({{item.nuCantidad}} <span *ngIf="item.nuCantidad==1">Registro</span> <span *ngIf="item.nuCantidad!=1">Registros</span>)
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12" style="text-align: center;">
+        <button type="button" class="btn btn-success" (click)="filtrarListaTitulares()">Filtrar</button>
+      </div>
+    </div>
+
+  </div>
+</ng-template>
+
+
+<ng-template #_modalEstadistica>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Estadistica</h4>
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body" style="text-align: center;">
+    <div class="row">
+      <div class="col-sm-12" style="text-align: center;">
+        <google-chart #chart
+        [title]="title"
+        type="PieChart"
+        [data]="data"
+        [columnNames]="columnNames"
+        [options]="options">
+         </google-chart>
+      </div>
+    </div>
+
+  </div>
+</ng-template>

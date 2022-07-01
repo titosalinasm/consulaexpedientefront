@@ -10,7 +10,9 @@ export const END_POINTS = {
       lema: "/busqueda/lema",
       nombrelogo: "/busqueda/nombrelogo",
       prod_serv: "/busqueda/prodserv",
-      titulares: "/busqueda/titulares"
+      titulares: "/busqueda/titulares",
+      expedientextitular: "/busqueda/expedientextitular",
+      estadistica: "/busqueda/estadistica"
 
     },
     token:{

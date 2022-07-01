@@ -13,6 +13,8 @@
   src: url(~assets/fonts/montserrat-bold-webfont.woff) format('woff');
 }
 
+/* @import url("https://static.infragistics.com/xplatform/css/samples/shared.v6.css"); */
+
 /* You can add global styles to this file, and also import other style files */
 
 ._btnround {

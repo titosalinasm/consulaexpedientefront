@@ -50,7 +50,9 @@ import { ProdservService } from './servicios/prodserv.service';
 import { AlertModule } from 'ngx-bootstrap/alert';
 import { ConsultaTitularidadComponent } from './componentes/consulta-titularidad/consulta-titularidad.component';
 import { BusTitularesService } from './servicios/bus-titulares.service';
-
+import { ExpedienteXTitularService } from './servicios/expediente-x-titular.service';
+import { GoogleChartsModule } from 'angular-google-charts';
+import { EstadisticaService } from './servicios/estadistica.service';
 
 @NgModule({
   declarations: [
@@ -89,6 +91,8 @@ import { BusTitularesService } from './servicios/bus-titulares.service';
     ToastNoAnimationModule.forRoot(),
     TooltipModule.forRoot(),
     AlertModule.forRoot(),
+    GoogleChartsModule,
+    NgxPaginationModule,
   ],
   providers: [
     ConfiguracionService,
@@ -102,6 +106,8 @@ import { BusTitularesService } from './servicios/bus-titulares.service';
     NombrelogoService,
     ProdservService,
     BusTitularesService,
+    ExpedienteXTitularService,
+    EstadisticaService,
     {
       provide: RECAPTCHA_V3_SITE_KEY,
       useValue: environment.recaptcha.siteKey,
@@ -109,8 +115,7 @@ import { BusTitularesService } from './servicios/bus-titulares.service';
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true}
   ],
   exports:[CommonModule,
-           NgxPaginationModule,
-
+           NgxPaginationModule
            ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

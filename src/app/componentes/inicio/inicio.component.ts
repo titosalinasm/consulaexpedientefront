@@ -53,7 +53,17 @@ export class InicioComponent implements OnInit {
       break;
       case 3:
         this.router.navigate(['/consulta-por-titularidad']);
+        break;
+      case 4:
+        this.router.navigate(['/consulta-por-denunciante']);
       break;
+      case 5:
+        this.router.navigate(['/consulta-por-denunciado']);
+        break;
+      case 6:
+        this.router.navigate(['/consulta-por-sancionado']);
+      break;
+
       default:
         this.router.navigate(['/inicio']);
       break

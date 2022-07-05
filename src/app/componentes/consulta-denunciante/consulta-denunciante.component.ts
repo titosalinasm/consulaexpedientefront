@@ -8,20 +8,23 @@ import { ToastrService } from 'ngx-toastr';
 import { GlobalService } from 'src/app/global.service';
 import { BusExpedienteService } from 'src/app/servicios/bus-expediente.service';
 import { BusTitularesService } from 'src/app/servicios/bus-titulares.service';
+import { DenuncianteService } from 'src/app/servicios/denunciante.service';
 import { DetalleexpedienteService } from 'src/app/servicios/detalleexpediente.service';
 import { EnperrenovacionService } from 'src/app/servicios/enperrenovacion.service';
 import { EstadisticaService } from 'src/app/servicios/estadistica.service';
 import { ExcelService } from 'src/app/servicios/excel.service';
 import { ExpedienteXTitularService } from 'src/app/servicios/expediente-x-titular.service';
+import { ExpedientexdenuncianteService } from 'src/app/servicios/expedientexdenunciante.service';
 import { ImagenService } from 'src/app/servicios/imagen.service';
 import { ProdservService } from 'src/app/servicios/prodserv.service';
 import { TokenService } from 'src/app/servicios/token.service';
+
 @Component({
-  selector: 'app-consulta-titularidad',
-  templateUrl: './consulta-titularidad.component.html',
-  styleUrls: ['./consulta-titularidad.component.css']
+  selector: 'app-consulta-denunciante',
+  templateUrl: './consulta-denunciante.component.html',
+  styleUrls: ['./consulta-denunciante.component.css']
 })
-export class ConsultaTitularidadComponent implements OnInit {
+export class ConsultaDenuncianteComponent implements OnInit {
 
   frmPnatural = this.formBuilder.group({
     nombres: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(350)]],
@@ -55,8 +58,8 @@ export class ConsultaTitularidadComponent implements OnInit {
     private prodservService : ProdservService,
     private imagenService : ImagenService,
     private globalService: GlobalService,
-    private busTitularesService: BusTitularesService,
-    private expedienteXTitularService: ExpedienteXTitularService,
+    private denuncianteService: DenuncianteService,
+    private expedientexdenuncianteService: ExpedientexdenuncianteService,
     private estadisticaService : EstadisticaService,
     private _excel: ExcelService,
     private _periodo_renovacion: EnperrenovacionService) {
@@ -70,9 +73,6 @@ export class ConsultaTitularidadComponent implements OnInit {
   lstEnPerRenovacion : any[]=[];
   nuEnPeriodoRenovacion : number=0;
   vcTitular: string='';
-
-  objDetalleExpediente : any;
-  lstPersonas : any[]=[];
 
 
   isShowTable: boolean = false;
@@ -91,9 +91,14 @@ export class ConsultaTitularidadComponent implements OnInit {
 
   _pagina_renovacion : number=1;
 
+  objDetalleExpediente : any;
+
+  lstPersonas : any=[];
+
   @ViewChild('_modalFiltro') _modalFiltro: TemplateRef<any>;
   @ViewChild('_modalEstadistica') _modalEstadistica: TemplateRef<any>;
   @ViewChild('_modal_exp_detalle') _modal_exp_detalle: TemplateRef<any>;
+
 
   // _spinner_simple : boolean =false;
 
@@ -137,7 +142,7 @@ export class ConsultaTitularidadComponent implements OnInit {
 
   }
 
-  this.busTitularesService.getWithPost$(this.objParam).subscribe(
+  this.denuncianteService.getWithPost$(this.objParam).subscribe(
     resp => {
       this._spinner.hide();
       this.isShowTable = true;
@@ -178,7 +183,7 @@ export class ConsultaTitularidadComponent implements OnInit {
 
   doBuscarMas(){
     this._spinner.show();
-  this.busTitularesService.getWithPost$(this.objParam).subscribe(
+  this.denuncianteService.getWithPost$(this.objParam).subscribe(
     resp => {
       this._spinner.hide();
       this.isShowTable = true;
@@ -214,7 +219,6 @@ export class ConsultaTitularidadComponent implements OnInit {
 
     this.doBuscarMas();
   }
-
   doBuscarExpedienteDetalle(item :any){
     this._spinner.show();
     let param={
@@ -256,23 +260,24 @@ export class ConsultaTitularidadComponent implements OnInit {
     );
   }
   doExpedienteXTitular(vcTitular : string, row : number){
-    // this._spinner_simple=true;
+
     this.lstSelectTitulares[row].blLoad=true;
     if(!this.lstTitulares[row].lstExpedienteTitular){
     let param={
       vcTitular: vcTitular
     }
 
-  this.expedienteXTitularService.getWithPost$(param).subscribe(
+  this.expedientexdenuncianteService.getWithPost$(param).subscribe(
     resp => {
-      //  this._spinner_simple=false;
+
       this.lstSelectTitulares[row].blLoad=false;
 
       this.lstTitulares[row].lstExpedienteTitular=resp.lstExpedienteTitular;
 
       this.globalService._lstTitularesBackup=Object.assign([], this.lstTitulares);
 
-      this.doCargarFiltrosSinModal();
+      // this.doCargarFiltrosSinModal();
+      // console.log(this.lstTitulares[row].lstExpedienteTitular);
 
       for(let i=0; i<this.lstTitulares[row].lstExpedienteTitular.length; i++){
         this.obtenerImagenes(this.lstTitulares[row].lstExpedienteTitular[i].vcFigura, row, i);
@@ -582,6 +587,24 @@ getDescargaExcel(item: any){
 
 }
 
+getDescargarTitularesExcel(){
+  let lstReporte: any=[];
+  for(let objReporte of this.lstTitulares){
+    let objExcel : any={};
+
+     objExcel.TITULAR = objReporte.vcTitular;
+     objExcel.PAIS = objReporte.vcIdPais
+
+     lstReporte.push(objExcel);
+  }
+
+    if(lstReporte.length>0)
+    this._excel.exportAsExcelFile(lstReporte, 'Titulare(s)');
+    else
+    this.toastr.show('Nada que exportar', 'Información');
+
+}
+
 getDescargarEnPlazoRenovacion(lstEnPlazoRenovacion: any[], vcTitular : string){
   let lstReporte: any=[];
   for(let objReporte of lstEnPlazoRenovacion){
@@ -604,7 +627,6 @@ getDescargarEnPlazoRenovacion(lstEnPlazoRenovacion: any[], vcTitular : string){
     this.toastr.show('Nada que exportar', 'Información');
 
 }
-
 
 
 }

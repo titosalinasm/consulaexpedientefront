@@ -12,12 +12,12 @@
         <div class="card mb-3" style="border: 0px;" >
           <div class="row">
             <div class="col-sm-2" style="width: 90px !important;">
-              <img src="./assets/images/con_titularidad_icon.svg" class="card-img" style="width: 80px;">
+              <img src="./assets/images/con_sancionado_icon.svg" class="card-img" style="width: 80px;">
             </div>
             <div class="col-sm-8" >
                 <div class="card-body" style="padding-left: 0px;">
-                <h5 class="card-title">Consulta por Titularidad</h5>
-                <p class="card-text">Realice la búsqueda por el titular de la marca.</p>
+                <h5 class="card-title">Consulta por sancionado</h5>
+                <p class="card-text">Realice la búsqueda por el sancionado.</p>
               </div>
 
             </div>
@@ -167,18 +167,19 @@
       <div class="col-sm-12">
         <div *ngIf="lstTitulares.length > 0; then thenBlock_a else elseBlock_a"></div>
         <ng-template #thenBlock_a>
-            <button type="button" class="btn btn-light" style="margin-right: 3px;" (click)="doCargarFiltros()"
+            <!-- <button type="button" class="btn btn-light" style="margin-right: 3px;" (click)="doCargarFiltros()"
             tooltip="Filtrar">
             <span style="font-size: 1em; color: green">
               <i class="fa fa-filter" aria-hidden="true"></i>
             </span>
-             </button>
-            <!-- <button type="button" class="btn btn-light" style="margin-right: 3px;" (click)="imprimir()"
-              tooltip="Imprimir búsqueda">
-              <span style="font-size: 1em; color: green">
-                <i class="fas fa-print"></i>
-              </span>
-            </button> -->
+             </button> -->
+
+            <button type="button" class="btn btn-light" style="margin-right: 3px;" (click)="getDescargarTitularesExcel()"
+            tooltip="Export titulares">
+            <span style="font-size: 1em; color: green">
+              <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+            </span>
+            </button>
 
         </ng-template>
         <ng-template #elseBlock_a>
@@ -216,10 +217,10 @@
               <thead>
                 <tr class="font-mb">
                   <th scope="col">#</th>
-                  <th scope="col">Titular</th>
+                  <th scope="col">Sancionado</th>
                   <th scope="col">Pais</th>
                   <th scope="col"></th>
-                  <th scope="col"></th>
+                  <!-- <th scope="col"></th> -->
                 </tr>
               </thead>
               <tbody *ngFor="let item of lstTitulares; let row = index" id="{{row}}">
@@ -235,7 +236,7 @@
                         <i class="fas fa-chevron-down"></i>
                       </div>
                   </td>
-                  <td  style="cursor:pointer;color: #198754"><i class="fa fa-pie-chart" aria-hidden="true" (click)="getEstadistica(item)"></i></td>
+                  <!-- <td  style="cursor:pointer;color: #198754"><i class="fa fa-pie-chart" aria-hidden="true" (click)="getEstadistica(item)"></i></td> -->
                 </tr>
 
                 <tr *ngIf="lstSelectTitulares[row].blView">
@@ -275,8 +276,8 @@
                             </td>
                             <td class="text-center">
                               <button type="button" class="btn btn-outline-default waves-effect" style="color: #65bd42; font-weight: 500;"
-                              (click)="doBuscarExpedienteDetalle(item2)"
                               tooltip="Detalle del Expediente"
+                              (click)="doBuscarExpedienteDetalle(item2)"
                               >
                               <i class="fas fa-search pr-2" aria-hidden="true"></i>
                               <span style="text-decoration-line: underline;">{{item2.vcNroExpediente}}-{{item2.nuAnioExpediente}}</span>
@@ -366,85 +367,6 @@
     </div>
 
   </div>
-</ng-template>
-
-
-<ng-template #_modalEstadistica  let-close="close" data-keyboard="false" data-backdrop="static">
-  <div class="modal-header">
-    <h4 class="modal-title pull-left">Estadística</h4>
-    <!-- <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
-      <span aria-hidden="true" class="visually-hidden">&times;</span>
-    </button> -->
-  </div>
-  <div class="modal-body" style="text-align: center;">
-    <div class="row">
-      <div class="col-sm-12" style="text-align: center;">
-        <google-chart #chart
-        [title]="title"
-        type="PieChart"
-        [data]="data"
-        [columnNames]="columnNames"
-        [options]="options">
-         </google-chart>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-sm-12" style="text-align: center;">
-        <button type="button" class="btn btn-light" (click)="getLstPerRenovacion(vcTitular)"
-        style="font-size: 12px;"
-        *ngIf="lstEnPerRenovacion.length==0 && nuEnPeriodoRenovacion!=0"
-        >Cargar en plazo de renovación</button>
-        <button type="button" class="btn btn-light" (click)="getDescargarEnPlazoRenovacion(lstEnPerRenovacion, title)"
-        style="font-size: 12px; width: 100%; color:#198754"
-        *ngIf="lstEnPerRenovacion.length!=0"
-        ><span><i class="fa fa-file-excel-o" aria-hidden="true"></i></span> Exportar</button>
-      </div>
-    </div>
-    <div class="row" *ngIf="lstEnPerRenovacion.length!=0">
-      <div class="col-sm-12" style="text-align: center;">
-    <div class="table-responsive">
-      <table class="table table-bordered table-sm" style="font-size: 9px;">
-        <thead>
-          <tr class="font-mb">
-            <th scope="col">Nro. Certificado</th>
-            <th scope="col">Año de registro</th>
-            <th scope="col">Tipo de solicitud</th>
-            <th scope="col">Fecha de expiración</th>
-            <th scope="col">Denominación</th>
-          </tr>
-        </thead>
-        <tbody *ngFor="let item of lstEnPerRenovacion  | paginate: { itemsPerPage: 5, currentPage: _pagina_renovacion, id: 'en_renovacion'}; let row = index" >
-
-          <tr  class="row-hover">
-            <td>{{item.vcNroCertificado}}</td>
-            <td>{{item.nuAnioRegistro}}</td>
-            <td>{{item.vcTipoSolicitud}}</td>
-            <td>{{item.vcFechaExpiracion}}</td>
-            <td>{{item.vcDenominacion}}</td>
-          </tr>
-        </tbody>
-      </table>
-      <pagination-controls
-      [responsive]="true"
-      previousLabel="Atras"
-      nextLabel="Siguiente"
-      (pageChange)="_pagina_renovacion = $event"
-      id="en_renovacion"
-      style="font-size: 12px;"
-      >
-    </pagination-controls>
-    </div>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-sm-12" style="text-align: right;">
-    <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>
-  </div>
-</div>
-</div>
-
 </ng-template>
 
 <ng-template #_modal_exp_detalle>
@@ -671,3 +593,81 @@
     </div>
   </div>
 </ng-template>
+
+
+<!-- <ng-template #_modalEstadistica  let-close="close" data-keyboard="false" data-backdrop="static">
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Estadística</h4>
+  </div>
+  <div class="modal-body" style="text-align: center;">
+    <div class="row">
+      <div class="col-sm-12" style="text-align: center;">
+        <google-chart #chart
+        [title]="title"
+        type="PieChart"
+        [data]="data"
+        [columnNames]="columnNames"
+        [options]="options">
+         </google-chart>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12" style="text-align: center;">
+        <button type="button" class="btn btn-light" (click)="getLstPerRenovacion(vcTitular)"
+        style="font-size: 12px;"
+        *ngIf="lstEnPerRenovacion.length==0 && nuEnPeriodoRenovacion!=0"
+        >Cargar en plazo de renovación</button>
+        <button type="button" class="btn btn-light" (click)="getDescargarEnPlazoRenovacion(lstEnPerRenovacion, title)"
+        style="font-size: 12px; width: 100%; color:#198754"
+        *ngIf="lstEnPerRenovacion.length!=0"
+        ><span><i class="fa fa-file-excel-o" aria-hidden="true"></i></span> Exportar</button>
+      </div>
+    </div>
+    <div class="row" *ngIf="lstEnPerRenovacion.length!=0">
+      <div class="col-sm-12" style="text-align: center;">
+    <div class="table-responsive">
+      <table class="table table-bordered table-sm" style="font-size: 9px;">
+        <thead>
+          <tr class="font-mb">
+            <th scope="col">Nro. Certificado</th>
+            <th scope="col">Año de registro</th>
+            <th scope="col">Tipo de solicitud</th>
+            <th scope="col">Fecha de expiración</th>
+            <th scope="col">Denominación</th>
+          </tr>
+        </thead>
+        <tbody *ngFor="let item of lstEnPerRenovacion  | paginate: { itemsPerPage: 5, currentPage: _pagina_renovacion, id: 'en_renovacion'}; let row = index" >
+
+          <tr  class="row-hover">
+            <td>{{item.vcNroCertificado}}</td>
+            <td>{{item.nuAnioRegistro}}</td>
+            <td>{{item.vcTipoSolicitud}}</td>
+            <td>{{item.vcFechaExpiracion}}</td>
+            <td>{{item.vcDenominacion}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <pagination-controls
+      [responsive]="true"
+      previousLabel="Atras"
+      nextLabel="Siguiente"
+      (pageChange)="_pagina_renovacion = $event"
+      id="en_renovacion"
+      style="font-size: 12px;"
+      >
+    </pagination-controls>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12" style="text-align: right;">
+    <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>
+  </div>
+</div>
+</div>
+
+</ng-template> -->
+
+

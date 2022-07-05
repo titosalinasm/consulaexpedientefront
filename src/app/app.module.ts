@@ -54,6 +54,15 @@ import { ExpedienteXTitularService } from './servicios/expediente-x-titular.serv
 import { GoogleChartsModule } from 'angular-google-charts';
 import { EstadisticaService } from './servicios/estadistica.service';
 import { EnperrenovacionService } from './servicios/enperrenovacion.service';
+import { DenuncianteService } from './servicios/denunciante.service';
+import { ExpedientexdenuncianteService } from './servicios/expedientexdenunciante.service';
+import { DenunciadoService } from './servicios/denunciado.service';
+import { ExpedientexdenunciadoService } from './servicios/expedientexdenunciado.service';
+import { SancionadoService } from './servicios/sancionado.service';
+import { ExpedientexsancionadoService } from './servicios/expedientexsancionado.service';
+import { ConsultaDenuncianteComponent } from './componentes/consulta-denunciante/consulta-denunciante.component';
+import { ConsultaDenunciadoComponent } from './componentes/consulta-denunciado/consulta-denunciado.component';
+import { ConsultaSancionadoComponent } from './componentes/consulta-sancionado/consulta-sancionado.component';
 
 @NgModule({
   declarations: [
@@ -65,8 +74,10 @@ import { EnperrenovacionService } from './servicios/enperrenovacion.service';
     TooltipComponent,
     ConsultaCertificadoComponent,
     ConsultaExpedienteComponent,
-    ConsultaTitularidadComponent
-
+    ConsultaTitularidadComponent,
+    ConsultaDenuncianteComponent,
+    ConsultaDenunciadoComponent,
+    ConsultaSancionadoComponent
   ],
   imports: [
     BrowserModule,
@@ -110,6 +121,12 @@ import { EnperrenovacionService } from './servicios/enperrenovacion.service';
     ExpedienteXTitularService,
     EstadisticaService,
     EnperrenovacionService,
+    DenuncianteService,
+    ExpedientexdenuncianteService,
+    DenunciadoService,
+    ExpedientexdenunciadoService,
+    SancionadoService,
+    ExpedientexsancionadoService,
     {
       provide: RECAPTCHA_V3_SITE_KEY,
       useValue: environment.recaptcha.siteKey,

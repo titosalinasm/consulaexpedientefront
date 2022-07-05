@@ -13,7 +13,16 @@ export const END_POINTS = {
       titulares: "/busqueda/titulares",
       expedientextitular: "/busqueda/expedientextitular",
       estadistica: "/busqueda/estadistica",
-      lstperrenovacion:  "/busqueda/lstperrenovacion"
+      lstperrenovacion:  "/busqueda/lstperrenovacion",
+
+      denunciante:  "/busqueda/denunciante",
+      expedientexdenunciante:  "/busqueda/expedientexdenunciante",
+
+      denunciado:  "/busqueda/denunciado",
+      expedientexdenunciado:  "/busqueda/expedientexdenunciado",
+
+      sancionado:  "/busqueda/sancionado",
+      expedientexsancionado:  "/busqueda/expedientexsancionado",
 
     },
     token:{

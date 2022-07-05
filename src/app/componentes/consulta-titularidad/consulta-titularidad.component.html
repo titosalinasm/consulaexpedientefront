@@ -240,7 +240,8 @@
 
                 <tr *ngIf="lstSelectTitulares[row].blView">
                   <td colspan="4" style="padding: 0px;">
-                    <div *ngIf="_spinner_simple && lstSelectTitulares[row].blView && !item.lstExpedienteTitular " class="spinner-border text-success " style="margin-top: 10px;" role="status">
+                    <div *ngIf="lstSelectTitulares[row].blLoad && !item.lstExpedienteTitular"
+                     class="spinner-border text-success " style="margin-top: 10px;" role="status">
                       <span class="sr-only">Loading...</span>
                     </div>
                     <div class="table-responsive" *ngIf="item?.lstExpedienteTitular?.length>0">
@@ -266,8 +267,12 @@
                         <tbody *ngFor="let item2 of item.lstExpedienteTitular  | paginate: { itemsPerPage: 10, currentPage: p[row], id: item.nuFila}; let row2 = index" >
 
                           <tr  class="row-hover">
-                            <th>{{row2+1}}</th>
-                            <td style="text-align: left; max-width:200px;">{{item2.vcDenominacion}}</td>
+                            <th>{{item2.nuLinea}}</th>
+                            <td style="text-align: left; max-width:100px;">
+                              <span *ngIf="item2?.vcLogo==null">{{item2.vcDenominacion}}</span>
+                              <img *ngIf="item2?.vcLogo!=null" [src]="item2.vcLogo" style="max-width: 80px; max-height: 80px;"/>
+
+                            </td>
                             <td class="text-center">
                               <button type="button" class="btn btn-outline-default waves-effect" style="color: #65bd42; font-weight: 500;"
                               tooltip="Detalle del Expediente"
@@ -301,7 +306,10 @@
           </div>
           <div class="row">
             <div class="col-sm text-center">
-              <button type="submit" class="btn btn-outline-primary font-mb" style="margin-bottom: 15px;" (click)="doVerMas()" *ngIf="this.lstSelectTitulares.length<=this.nuLimitSup">
+              <button type="submit" class="btn btn-outline-primary font-mb"
+               style="margin-bottom: 15px;"
+               (click)="doVerMas()"
+               *ngIf="!nuOcultarBoton">
                     Ver más</button>
             </div>
           </div>
@@ -360,12 +368,12 @@
 </ng-template>
 
 
-<ng-template #_modalEstadistica>
+<ng-template #_modalEstadistica  let-close="close" data-keyboard="false" data-backdrop="static">
   <div class="modal-header">
-    <h4 class="modal-title pull-left">Estadistica</h4>
-    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+    <h4 class="modal-title pull-left">Estadística</h4>
+    <!-- <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
       <span aria-hidden="true" class="visually-hidden">&times;</span>
-    </button>
+    </button> -->
   </div>
   <div class="modal-body" style="text-align: center;">
     <div class="row">
@@ -380,5 +388,60 @@
       </div>
     </div>
 
+    <div class="row">
+      <div class="col-sm-12" style="text-align: center;">
+        <button type="button" class="btn btn-light" (click)="getLstPerRenovacion(vcTitular)"
+        style="font-size: 12px;"
+        *ngIf="lstEnPerRenovacion.length==0 && nuEnPeriodoRenovacion!=0"
+        >Cargar en plazo de renovación</button>
+        <button type="button" class="btn btn-light" (click)="getDescargarEnPlazoRenovacion(lstEnPerRenovacion, title)"
+        style="font-size: 12px; width: 100%; color:#198754"
+        *ngIf="lstEnPerRenovacion.length!=0"
+        ><span><i class="fa fa-file-excel-o" aria-hidden="true"></i></span> Exportar</button>
+      </div>
+    </div>
+    <div class="row" *ngIf="lstEnPerRenovacion.length!=0">
+      <div class="col-sm-12" style="text-align: center;">
+    <div class="table-responsive">
+      <table class="table table-bordered table-sm" style="font-size: 9px;">
+        <thead>
+          <tr class="font-mb">
+            <th scope="col">Nro. Certificado</th>
+            <th scope="col">Año de registro</th>
+            <th scope="col">Tipo de solicitud</th>
+            <th scope="col">Fecha de expiración</th>
+            <th scope="col">Denominación</th>
+          </tr>
+        </thead>
+        <tbody *ngFor="let item of lstEnPerRenovacion  | paginate: { itemsPerPage: 5, currentPage: _pagina_renovacion, id: 'en_renovacion'}; let row = index" >
+
+          <tr  class="row-hover">
+            <td>{{item.vcNroCertificado}}</td>
+            <td>{{item.nuAnioRegistro}}</td>
+            <td>{{item.vcTipoSolicitud}}</td>
+            <td>{{item.vcFechaExpiracion}}</td>
+            <td>{{item.vcDenominacion}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <pagination-controls
+      [responsive]="true"
+      previousLabel="Atras"
+      nextLabel="Siguiente"
+      (pageChange)="_pagina_renovacion = $event"
+      id="en_renovacion"
+      style="font-size: 12px;"
+      >
+    </pagination-controls>
+    </div>
   </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12" style="text-align: right;">
+    <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>
+  </div>
+</div>
+</div>
+
 </ng-template>

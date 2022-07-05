@@ -12,7 +12,8 @@ export const END_POINTS = {
       prod_serv: "/busqueda/prodserv",
       titulares: "/busqueda/titulares",
       expedientextitular: "/busqueda/expedientextitular",
-      estadistica: "/busqueda/estadistica"
+      estadistica: "/busqueda/estadistica",
+      lstperrenovacion:  "/busqueda/lstperrenovacion"
 
     },
     token:{

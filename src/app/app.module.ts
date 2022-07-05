@@ -53,6 +53,7 @@ import { BusTitularesService } from './servicios/bus-titulares.service';
 import { ExpedienteXTitularService } from './servicios/expediente-x-titular.service';
 import { GoogleChartsModule } from 'angular-google-charts';
 import { EstadisticaService } from './servicios/estadistica.service';
+import { EnperrenovacionService } from './servicios/enperrenovacion.service';
 
 @NgModule({
   declarations: [
@@ -108,6 +109,7 @@ import { EstadisticaService } from './servicios/estadistica.service';
     BusTitularesService,
     ExpedienteXTitularService,
     EstadisticaService,
+    EnperrenovacionService,
     {
       provide: RECAPTCHA_V3_SITE_KEY,
       useValue: environment.recaptcha.siteKey,

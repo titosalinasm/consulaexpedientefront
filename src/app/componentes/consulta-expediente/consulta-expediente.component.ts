@@ -276,9 +276,6 @@ export class ConsultaExpedienteComponent implements OnInit, AfterViewInit{
           }else{
             this.lstExpediente[index].vcFigura=null;
           }
-
-
-
       }, error => {
 
       });

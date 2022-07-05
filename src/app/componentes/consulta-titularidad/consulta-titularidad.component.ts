@@ -9,6 +9,7 @@ import { GlobalService } from 'src/app/global.service';
 import { BusExpedienteService } from 'src/app/servicios/bus-expediente.service';
 import { BusTitularesService } from 'src/app/servicios/bus-titulares.service';
 import { DetalleexpedienteService } from 'src/app/servicios/detalleexpediente.service';
+import { EnperrenovacionService } from 'src/app/servicios/enperrenovacion.service';
 import { EstadisticaService } from 'src/app/servicios/estadistica.service';
 import { ExcelService } from 'src/app/servicios/excel.service';
 import { ExpedienteXTitularService } from 'src/app/servicios/expediente-x-titular.service';
@@ -57,7 +58,8 @@ export class ConsultaTitularidadComponent implements OnInit {
     private busTitularesService: BusTitularesService,
     private expedienteXTitularService: ExpedienteXTitularService,
     private estadisticaService : EstadisticaService,
-    private _excel: ExcelService) {
+    private _excel: ExcelService,
+    private _periodo_renovacion: EnperrenovacionService) {
   }
 
 
@@ -65,6 +67,10 @@ export class ConsultaTitularidadComponent implements OnInit {
   objParam : any;
   lstTitulares : any[]=[];
   lstSelectTitulares : any[]=[];
+  lstEnPerRenovacion : any[]=[];
+  nuEnPeriodoRenovacion : number=0;
+  vcTitular: string='';
+
 
   isShowTable: boolean = false;
   idShow: any = -1;
@@ -73,15 +79,19 @@ export class ConsultaTitularidadComponent implements OnInit {
   nuLimitSup: number=100;
   nuIngremental : number=100;
 
+  nuOcultarBoton : boolean=false;
+
   lstFiltroProcedimiento: any[]=[];
   lstFiltroClases: any[]=[];
 
   modalRef: BsModalRef;
 
+  _pagina_renovacion : number=1;
+
   @ViewChild('_modalFiltro') _modalFiltro: TemplateRef<any>;
   @ViewChild('_modalEstadistica') _modalEstadistica: TemplateRef<any>;
 
-  _spinner_simple : boolean =false;
+  // _spinner_simple : boolean =false;
 
 
   ngOnInit() {
@@ -93,6 +103,7 @@ export class ConsultaTitularidadComponent implements OnInit {
     this.frmPjuridica.reset();
     this.nuIdTipoPersona=tab;
     this.isShowTable = false;
+    this.nuOcultarBoton=false;
   }
 
   buscarTitulares(){
@@ -130,13 +141,15 @@ export class ConsultaTitularidadComponent implements OnInit {
       for(let i=0; i<this.lstTitulares.length; i++){
         let objParam={
           nuRow: i,
-          blView: false
+          blView: false,
+          blLoad: false
           }
         this.lstSelectTitulares.push(objParam);
       }
       this.globalService._lstTitularesBackup=Object.assign([], this.lstTitulares);
       this.lstFiltroProcedimiento=[];
       this.lstFiltroClases=[];
+      this.nuOcultarBoton=false;
 
   }, error => {
 
@@ -166,9 +179,22 @@ export class ConsultaTitularidadComponent implements OnInit {
       this._spinner.hide();
       this.isShowTable = true;
       for(let i=0; i<(resp.lstTitulares.length); i++){
+
       this.lstTitulares.push(resp.lstTitulares[i]);
 
+      let objParam={
+        nuRow: resp.lstTitulares[i].nuFila-1,
+        blView: false,
+        blLoad: false
+        }
+      this.lstSelectTitulares.push(objParam);
+
       this.globalService._lstTitularesBackup=Object.assign([], this.lstTitulares);
+      }
+      if(resp.lstTitulares.length==0){
+        this.nuOcultarBoton=true;
+      }else{
+        this.nuOcultarBoton=false;
       }
   }, error => {
 
@@ -186,14 +212,17 @@ export class ConsultaTitularidadComponent implements OnInit {
   }
 
   doExpedienteXTitular(vcTitular : string, row : number){
-    this._spinner_simple=true;
+    // this._spinner_simple=true;
+    this.lstSelectTitulares[row].blLoad=true;
     if(!this.lstTitulares[row].lstExpedienteTitular){
     let param={
       vcTitular: vcTitular
     }
+
   this.expedienteXTitularService.getWithPost$(param).subscribe(
     resp => {
-       this._spinner_simple=false;
+      //  this._spinner_simple=false;
+      this.lstSelectTitulares[row].blLoad=false;
 
       this.lstTitulares[row].lstExpedienteTitular=resp.lstExpedienteTitular;
 
@@ -201,12 +230,17 @@ export class ConsultaTitularidadComponent implements OnInit {
 
       this.doCargarFiltrosSinModal();
 
+      for(let i=0; this.lstTitulares[row].lstExpedienteTitular.length; i++){
+        this.obtenerImagenes(this.lstTitulares[row].lstExpedienteTitular[i].vcFigura, row, i);
+      }
+
   }, error => {
-    this._spinner_simple=false;
+    // this._spinner_simple=false;
+    this.lstSelectTitulares[row].blLoad=false;
   });
 
 }else{
-  this._spinner_simple=false;
+  // this._spinner_simple=false;
 }
 }
 
@@ -388,12 +422,17 @@ getEstadistica(item: any){
       console.log(resp)
       this._spinner.hide();
      this.data = [
-        ['Certificados en plazo de renovación', resp.nuEnPlazoRenovacion],
-        ['Certificados activos', resp.nuActivos],
-        ['Otros', resp.nuOtros]
+        ['['+resp.nuActivos+'] '+'Activo(s)', resp.nuActivos],
+        ['['+resp.nuEnPlazoRenovacion+'] '+'En plazo de renovación' , resp.nuEnPlazoRenovacion],
+        ['['+resp.nuOtros+'] '+'Otro(s)', resp.nuOtros]
      ];
 
+     this.nuEnPeriodoRenovacion=resp.nuEnPlazoRenovacion;
+     this.vcTitular=item.vcTitular;
+
       let objClass = {          id: 0 ,
+        backdrop: true,
+        ignoreBackdropClick: true,
         class: 'modal-md'
       };
     this.openModal(this._modalEstadistica, objClass);
@@ -401,6 +440,54 @@ getEstadistica(item: any){
   }, error => {
     this._spinner.hide();
   });
+}
+
+getLstPerRenovacion(vcTitular : string){
+  this._spinner.show();
+  let param={
+    vcTitular:vcTitular
+  }
+  this._periodo_renovacion.getWithPost$(param).subscribe(
+    resp => {
+      this._spinner.hide();
+      this.lstEnPerRenovacion=resp.lstEnPerRenovacion;
+
+  }, error => {
+    this._spinner.hide();
+  });
+
+}
+
+cerrarModal(){
+  this.modalRef?.hide();
+  this._pagina_renovacion=1;
+  this.nuEnPeriodoRenovacion=0;
+  this.lstEnPerRenovacion=[];
+}
+
+obtenerImagenes(valor : any, index1: number,index2: number) {
+  if (valor!='null') {
+    let param={
+      vcNombreLogo: valor
+    }
+    this.imagenService.getWithPost$(param).subscribe(
+      resp => {
+
+        if(resp.nuFlagResult==0){
+          this.lstTitulares[index1].lstExpedienteTitular[index2].vcLogo='data:image/gif;base64,'+resp.recurso;
+         }else{
+          this.lstTitulares[index1].lstExpedienteTitular[index2].vcLogo=null;
+        }
+        this.globalService._lstTitularesBackup=Object.assign([], this.lstTitulares);
+
+    }, error => {
+
+    });
+  }else{
+    this.lstTitulares[index1].lstExpedienteTitular[index2].vcLogo=null;
+    this.globalService._lstTitularesBackup=Object.assign([], this.lstTitulares);
+  }
+
 }
 
 getDescargaExcel(item: any){
@@ -450,4 +537,30 @@ getDescargaExcel(item: any){
     this.toastr.show('Nada que exportar', 'Información');
 
 }
+
+getDescargarEnPlazoRenovacion(lstEnPlazoRenovacion: any[], vcTitular : string){
+  let lstReporte: any=[];
+  for(let objReporte of lstEnPlazoRenovacion){
+    let objExcel : any={};
+
+     objExcel.NRO_CERTIFICADO =objReporte.vcNroCertificado;
+     objExcel.ANIO_REGISTRO =objReporte.nuAnioRegistro;
+     objExcel.AREA_REGISTRO =objReporte.vcAreaRegistro;
+     objExcel.TIPO_SOLICITUD =objReporte.vcTipoSolicitud;
+     objExcel.FECHA_EXPIRACION =objReporte.vcFechaExpiracion;
+     objExcel.DENOMINACION =objReporte.vcDenominacion;
+
+
+     lstReporte.push(objExcel);
+  }
+
+    if(lstReporte.length>0)
+    this._excel.exportAsExcelFile(lstReporte, vcTitular);
+    else
+    this.toastr.show('Nada que exportar', 'Información');
+
+}
+
+
+
 }

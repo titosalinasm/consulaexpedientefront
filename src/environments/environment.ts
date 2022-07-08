@@ -5,8 +5,8 @@
 export const environment = {
   production: false,
   apiURL: {
-   registroURL: 'http://localhost:8080/appDSDConsultaExpedienteApi',
-  // registroURL: 'https://desblc01.indecopi.gob.pe/appDSDConsultaExpedienteApi',
+  //  registroURL: 'http://localhost:8080/appDSDConsultaExpedienteApi',
+  registroURL: 'https://desblc01.indecopi.gob.pe/appDSDConsultaExpedienteApi',
    apiUrlServiceOauth: 'https://desblc01.indecopi.gob.pe/appTodosServicioAutorizacion'
  },
  recaptcha: {

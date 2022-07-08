@@ -108,6 +108,16 @@ export class ConsultaTitularidadComponent implements OnInit {
     this.nuIdTipoPersona=tab;
     this.isShowTable = false;
     this.nuOcultarBoton=false;
+    this.lstFiltroClases=[];
+    this.lstFiltroProcedimiento=[];
+
+    this.lstSelectTitulares=[];
+    this.lstEnPerRenovacion=[];
+    this.nuEnPeriodoRenovacion=0;
+    this.vcTitular='';
+
+    this.objDetalleExpediente=null;
+    this.lstPersonas=[];
   }
 
   buscarTitulares(){
@@ -161,11 +171,44 @@ export class ConsultaTitularidadComponent implements OnInit {
   }
 
   limpiarPersonaNatural(){
+    this.nuLimitInf= 1;
+    this.nuLimitSup= 100;
+    this.nuIngremental =100;
+    this.frmPnatural.reset();
+    this.frmPjuridica.reset();
     this.isShowTable = false;
+    this.nuOcultarBoton=false;
+    this.lstFiltroClases=[];
+    this.lstFiltroProcedimiento=[];
+
+    this.lstSelectTitulares=[];
+    this.lstEnPerRenovacion=[];
+    this.nuEnPeriodoRenovacion=0;
+    this.vcTitular='';
+
+    this.objDetalleExpediente=null;
+    this.lstPersonas=[];
+
   }
 
   limpiarPersonaJuridica(){
+    this.nuLimitInf= 1;
+    this.nuLimitSup= 100;
+    this.nuIngremental =100;
+    this.frmPnatural.reset();
+    this.frmPjuridica.reset();
+    this.isShowTable = false;
+    this.nuOcultarBoton=false;
+    this.lstFiltroClases=[];
+    this.lstFiltroProcedimiento=[];
 
+    this.lstSelectTitulares=[];
+    this.lstEnPerRenovacion=[];
+    this.nuEnPeriodoRenovacion=0;
+    this.vcTitular='';
+
+    this.objDetalleExpediente=null;
+    this.lstPersonas=[];
   }
 
   imprimir() {
@@ -443,16 +486,23 @@ filtrarListaTitulares() {
 
   this.lstTitulares=JSON.parse(JSON.stringify(this.globalService._lstTitularesBackup));
 
-  let lstFiltroProcedimiento=this.lstFiltroProcedimiento.filter(x=>x.blSelected);
-  let lstFiltroClases=this.lstFiltroClases.filter(x=>x.blSelected);
+  let lstFiltroProcedimiento=this.lstFiltroProcedimiento.filter(x=>!x.blSelected);
+  let lstFiltroClases=this.lstFiltroClases.filter(x=>!x.blSelected);
   for(let i=0; i<this.lstTitulares.length;i++){
     if(this.lstTitulares[i].lstExpedienteTitular){
-    this.lstTitulares[i].lstExpedienteTitular=(this.lstTitulares[i].lstExpedienteTitular).filter((f: any) => lstFiltroProcedimiento.some(item => item.vcTipoProcedimiento===f.vcTipoProcedimiento));//Filtra los objetos de array con array
-    this.lstTitulares[i].lstExpedienteTitular=(this.lstTitulares[i].lstExpedienteTitular).filter((f: any) => lstFiltroClases.some(item => item.nuClase===f.nuClase));//Filtra los objetos de array con array
+    if(lstFiltroProcedimiento.length>0){
+    this.lstTitulares[i].lstExpedienteTitular=(this.lstTitulares[i].lstExpedienteTitular).filter((f: any) => (lstFiltroProcedimiento.some(item => item.vcTipoProcedimiento==f.vcTipoProcedimiento)));//Filtra los objetos de array con array
+    }
+    if(lstFiltroClases.length>0){
+    this.lstTitulares[i].lstExpedienteTitular=(this.lstTitulares[i].lstExpedienteTitular).filter((f: any) => (lstFiltroClases.some(item => item.nuClase==f.nuClase)));//Filtra los objetos de array con array
     }
   }
+  }
 
-  this.modalRef.hide();
+  if(lstFiltroProcedimiento.length==0 && lstFiltroClases.length==0){
+    this.lstTitulares=JSON.parse(JSON.stringify(this.globalService._lstTitularesBackup));
+  }
+
 }
 
 getEstadistica(item: any){

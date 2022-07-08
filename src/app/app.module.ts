@@ -63,6 +63,9 @@ import { ExpedientexsancionadoService } from './servicios/expedientexsancionado.
 import { ConsultaDenuncianteComponent } from './componentes/consulta-denunciante/consulta-denunciante.component';
 import { ConsultaDenunciadoComponent } from './componentes/consulta-denunciado/consulta-denunciado.component';
 import { ConsultaSancionadoComponent } from './componentes/consulta-sancionado/consulta-sancionado.component';
+import { ButtonsModule } from 'ngx-bootstrap/buttons';
+import {SelectButtonModule} from 'primeng/selectbutton';
+import {AccordionModule} from 'primeng/accordion';
 
 @NgModule({
   declarations: [
@@ -105,6 +108,9 @@ import { ConsultaSancionadoComponent } from './componentes/consulta-sancionado/c
     AlertModule.forRoot(),
     GoogleChartsModule,
     NgxPaginationModule,
+    ButtonsModule.forRoot(),
+    SelectButtonModule,
+    AccordionModule
   ],
   providers: [
     ConfiguracionService,

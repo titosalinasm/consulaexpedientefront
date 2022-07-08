@@ -42,9 +42,8 @@
             "scripts": [],
             "allowedCommonJsDependencies": [
               "rxjs-compat"
-           ]
+            ]
           },
-
           "configurations": {
             "prd": {
               "fileReplacements": [
@@ -148,7 +147,6 @@
               "src/styles.css"
             ],
             "scripts": []
-
           }
         },
         "lint": {

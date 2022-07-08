@@ -267,3 +267,7 @@ input::-webkit-calendar-picker-indicator {
 .table>:not(:first-child) {
   border-top: 1px solid currentColor !important;
 }
+
+.p-accordion .p-accordion-header .p-accordion-header-link{
+  padding:5px !important;
+}

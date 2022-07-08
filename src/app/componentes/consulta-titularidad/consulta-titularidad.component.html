@@ -163,7 +163,7 @@
     <!-- Mensaje -->
 
     <!-- Acciones -->
-    <div class="row text-right">
+    <!-- <div class="row text-right">
       <div class="col-sm-12">
         <div *ngIf="lstTitulares.length > 0; then thenBlock_a else elseBlock_a"></div>
         <ng-template #thenBlock_a>
@@ -173,42 +173,49 @@
               <i class="fa fa-filter" aria-hidden="true"></i>
             </span>
              </button>
-            <!-- <button type="button" class="btn btn-light" style="margin-right: 3px;" (click)="imprimir()"
-              tooltip="Imprimir búsqueda">
-              <span style="font-size: 1em; color: green">
-                <i class="fas fa-print"></i>
-              </span>
-            </button> -->
-
         </ng-template>
         <ng-template #elseBlock_a>
         </ng-template>
       </div>
-    </div>
+    </div> -->
     <!-- Acciones -->
-
+    <p-accordion>
+      <p-accordionTab header="Filtro(s)" *ngIf="lstFiltroProcedimiento.length>0 || lstFiltroClases.length>0">
+        <div class="row" *ngIf="lstFiltroProcedimiento.length>0">
+          <div class="col-sm-2">
+            Tipo de procedimiento:
+          </div>
+          <div class="col-sm-8" style="margin-top: 10px; margin-bottom: 10px; margin-right: 15px;">
+          <div class="btn-group"   *ngFor="let item of lstFiltroProcedimiento; let row = index" id="{{row}}">
+            <label  class="btn btn-outline-secondary" [class.active]="item.blSelected"
+            btnCheckbox
+            tabindex="0" role="button" (click)="doQuitaFiltroProcedimiento(row)"
+            style="font-size: 9px; width: auto; height: 30px;"
+            >{{item.vcTipoProcedimiento}} ({{item.nuCantidad}})</label>
+          </div>
+      </div>
+        </div>
+        <div class="row" *ngIf="lstFiltroClases.length>0">
+          <div class="col-sm-2">
+           Clase(s):
+          </div>
+          <div class="col-sm-8" style="margin-top: 10px; margin-bottom: 10px; margin-right: 15px;">
+          <div class="btn-group"  *ngFor="let item of lstFiltroClases; let row = index" id="{{row}}"  >
+            <label class="btn btn-outline-secondary" [class.active]="item.blSelected"
+            btnCheckbox
+            tabindex="0" role="button" (click)="doQuitaFiltroClase(row)"
+            style="font-size: 12px; width: auto;"
+            >{{item.nuClase}} ({{item.nuCantidad}})</label>
+          </div>
+      </div>
+        </div>
+      </p-accordionTab>
+  </p-accordion>
     <!-- Tabla de busqueda -->
     <div class="row">
       <div class="col-sm-12">
         <div *ngIf="lstTitulares.length > 0; then thenBlock_b else elseBlock_b"></div>
         <ng-template #thenBlock_b>
-          <div class="row">
-            <div class="col-sm-12" style="margin-top: 10px; margin-bottom: 10px; margin-right: 15px;">
-            <span  *ngFor="let item of lstFiltroProcedimiento; let row = index" id="{{row}}" >
-              <button class="btn btn-lg btn-success" style="font-size: 9px; width: auto; background: #4e4e4e; height: 30px; border-color: #9b9b9b; padding: 5px;" *ngIf="item.blSelected">
-              <span class="pull-left">{{item.vcTipoProcedimiento}} ({{item.nuCantidad}}) </span>
-              <i class="fa fa-times-circle pull-right" aria-hidden="true" style="margin-top: 2px; font-size: 13px;" (click)="doQuitaFiltroProcedimiento(row)"></i>
-              </button>
-           </span>
-
-           <span *ngFor="let item of lstFiltroClases; let row = index" id="{{row}}">
-            <button class="btn btn-lg btn-success" style="font-size: 9px; width: auto; background: #4e4e4e; height: 30px; border-color: #9b9b9b; padding: 5px;"  *ngIf="item.blSelected">
-            <span class="pull-left">{{item.nuClase}} ({{item.nuCantidad}}) </span>
-            <i class="fa fa-times-circle pull-right" aria-hidden="true" style="margin-top: 2px; font-size: 13px;"  (click)="doQuitaFiltroClase(row)"></i>
-            </button>
-         </span>
-        </div>
-          </div>
 
           <!-- <div class="table-responsive-sm"> -->
             <div class="table-responsive">
@@ -219,7 +226,7 @@
                   <th scope="col">Titular</th>
                   <th scope="col">Pais</th>
                   <th scope="col"></th>
-                  <th scope="col"></th>
+                  <th scope="col" style="width: 120px;"></th>
                 </tr>
               </thead>
               <tbody *ngFor="let item of lstTitulares; let row = index" id="{{row}}">
@@ -235,10 +242,16 @@
                         <i class="fas fa-chevron-down"></i>
                       </div>
                   </td>
-                  <td  style="cursor:pointer;color: #198754"><i class="fa fa-pie-chart" aria-hidden="true" (click)="getEstadistica(item)"></i></td>
+                  <td style="padding-left: 5px; padding-right: 5px;">
+                    <span>
+                    <i class="fa fa-pie-chart" aria-hidden="true" (click)="getEstadistica(item)" style="cursor:pointer;color: #198754; margin-right: 10px;" tooltip="Estadística"></i>
+                    <i class="fa fa-file-excel-o" aria-hidden="true" (click)="getDescargaExcel(item)" style="cursor:pointer;color: #198754 ; margin-left: 10px;" tooltip="Exportar"></i>
+                    </span>
+                  </td>
                 </tr>
 
                 <tr *ngIf="lstSelectTitulares[row].blView">
+                  <td style="border:0px solid"></td>
                   <td colspan="4" style="padding: 0px;">
                     <div *ngIf="lstSelectTitulares[row].blLoad && !item.lstExpedienteTitular"
                      class="spinner-border text-success " style="margin-top: 10px;" role="status">
@@ -249,11 +262,7 @@
                         <thead>
                           <tr class="font-mb">
                             <th scope="col">
-                              <button type="button" class="btn btn-light"  tooltip="Exportar" (click)="getDescargaExcel(item)">
-                              <span style="font-size: 1em; color: green;">
-                                <i class="fa fa-file-excel-o" aria-hidden="true"></i>
-                              </span>
-                              </button>
+                             Nro.
                             </th>
                             <th scope="col">Marca</th>
                             <th scope="col">Número de expediente</th>
@@ -262,6 +271,7 @@
                             <th scope="col">Tipo de signo distintivos</th>
                             <th scope="col">Clase</th>
                             <th scope="col">Vigencia</th>
+
                           </tr>
                         </thead>
                         <tbody *ngFor="let item2 of item.lstExpedienteTitular  | paginate: { itemsPerPage: 10, currentPage: p[row], id: item.nuFila}; let row2 = index" >
@@ -287,6 +297,7 @@
                             <td>{{item2.vcTipoSolicitud}}</td>
                             <td>{{item2.nuClase}}</td>
                             <td>{{item2.vcFechaExpiracion}}</td>
+
                           </tr>
                         </tbody>
                       </table>
@@ -310,7 +321,7 @@
               <button type="submit" class="btn btn-outline-primary font-mb"
                style="margin-bottom: 15px;"
                (click)="doVerMas()"
-               *ngIf="!nuOcultarBoton">
+               *ngIf="!(lstTitulares.length<nuLimitSup)">
                     Ver más</button>
             </div>
           </div>
